@@ -637,6 +637,7 @@ battledata.dealWithItemmessage = function(params) {
 
 battledata.dealWithMovemessage = function(params) {
     var mess = moveinfo.message(params.move, params.part);
+    var poke = this.pokes[params.spot];
     if (!mess) {
         return;
     }
@@ -651,6 +652,7 @@ battledata.dealWithMovemessage = function(params) {
     if (mess.contains("%i")) mess = mess.replace("%i", iteminfo.name(params.other));
     if (mess.contains("%a")) mess = mess.replace("%a", abilityinfo.name(params.other));
     if (mess.contains("%p")) mess = mess.replace("%p", pokeinfo.name(params.other));
+    if (mess.contains("%e")) mess = mess.replace("%e", poke.name);
     
     this.print("<span class='battle-message-" + typeinfo.name(params.type).toLowerCase() + "'>" + mess + "</span>");
 };
