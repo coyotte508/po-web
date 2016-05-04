@@ -94,12 +94,12 @@ var utils = {
     },
     rank: function (auth, set) {
         set = set || utils.rankSet;
-        auth = Math.min(0, Math.max(4, auth));
+        auth = Math.max(0, Math.min(4, auth));
         return set[auth] || "";
     },
     rankStyle: function (str, auth, set) {
         set = set || utils.rankStyleSet;
-        auth = Math.min(0, Math.max(4, auth));
+        auth = Math.max(0, Math.min(4, auth));
         return (set[auth] || "").replace(/\{name\}/gi, str);
     },
     // Shorthand for if (event.which === 13) { callback(); }
