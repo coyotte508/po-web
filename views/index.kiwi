@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" prefix="og: http://ogp.me/ns#">
 <head>
   <title>Play Pok&eacute;mon Online!</title>
@@ -14,10 +14,9 @@
 </head>
 <body>
 <div class="loading-overlay" style="z-index: 9000; position: fixed; left: 0; top: 0; right: 0; bottom: 0; vertical-align: middle; text-align: center; background: #FFFFFD">
-  <div style="margin: auto; top: 0; bottom: 0; left: 0; right: 0; height: 80px; position: absolute; background: #013FAD; color: #fff;">
+  <div style="margin: auto; top: 0; bottom: 0; left: 0; right: 0; height: 80px; position: absolute;">
     <h1>Loading<span class="dot0">.</span><span class="dot1">.</span><span class="dot2">.</span></h1>
-    <p>Pikachu is charging its batteries</p>
-    <img src="http://24.media.tumblr.com/fe61dc2b7ef08a538b906eced7fa5cb5/tumblr_mitnv9F37V1s5iz0ho1_500.gif" height="100">
+    <p>Pikachu is recharging its batteries</p>
   </div>
 </div>
 
@@ -80,7 +79,8 @@ $(function() {
           <ul class="dropdown-menu">
             <li><a href="po:idle/" class="checkbox-dd"><input type="checkbox" id="checkbox-idle-dd"/>&nbsp;Idle</a></li>
             <li><a href="po:timestamps/" class="checkbox-dd"><input type="checkbox" id="checkbox-timestamps-dd"/>&nbsp;Timestamps</a></li>
-            <li><a href="po:rainbow/" class="checkbox-dd"><input type="checkbox" id="checkbox-rainbow-dd"/>&nbsp;Rainbow mode</a></li>
+            <li><a href="po:sortauth/" class="checkbox-dd"><input type="checkbox" id="checkbox-sortauth-dd"/>&nbsp;Sort by auth</a></li>
+            <li><a href="po:rainbow/" class="checkbox-dd"><input type="checkbox" id="checkbox-rainbow-dd"/>&nbsp;Colored playerlist</a></li>
             <li><a href="po:exitwarning/" class="checkbox-dd"><input type="checkbox" id="checkbox-exitwarning-dd"/>&nbsp;Show Exit Warning</a></li>
             <li role="separator" class="divider"></li>
             <li><a href="po:download/"><span class="glyphicon glyphicon-save"></span> Download data</a>
@@ -108,7 +108,6 @@ $(function() {
       <form role="search" class="playerFilter">
         <div class="form-group">
           <div class="input-group">
-           <span class="input-group-btn" title="Sort by authority"><span class="btn btn-default" id="sort-by-auth"><span class="glyphicon glyphicon-king"></span></span>  </span>
             <input type="text" class="form-control" id="player-filter" placeholder="Players, #channels...">
           </div>
         </div>
