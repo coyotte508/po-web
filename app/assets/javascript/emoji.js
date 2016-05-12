@@ -1,4 +1,4 @@
-
+// emojis are from Github all emojis here: https://github.com/Heark/rgss3/blob/master/emoji.md
 function e_filter(text) {
   var emoticons = {
     ':-)' : '1f60a.png',
