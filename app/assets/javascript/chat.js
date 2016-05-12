@@ -59,7 +59,7 @@ Chat.prototype.insertMessage = function (msg, opts) {
         msg += "<br/>";
     }
 
-    chatTextArea.append("<div class='chat-line'>" + msg + "</div>");
+    chatTextArea.append("<div class='chat-line'>" + e_filter(msg) + "</div>");
 
     /* Limit number of lines */
     if (this.chatCount++ % 500 === 0) {
