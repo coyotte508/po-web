@@ -43,9 +43,13 @@ var notif = {
     },
     clear: function() {
         notif.count = 0
+        notif.one_count = 0
     },
     dec: function() {
         notif.count--
+        if(notif.count == 0){
+            notif.one_count = 0;
+        }
     },
     forEach: function(t) {
         for (var n = 0; n < t.length; n++) notif.update()
