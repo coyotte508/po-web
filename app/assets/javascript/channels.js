@@ -160,7 +160,7 @@ ChannelHolder.prototype.joinChannel = function(id) {
         this.trigger("joinchannel", id);
     } else {
         console.log("Channel already joined: " + id);
-     }
+    }
 };
 
 ChannelHolder.prototype.channelsByName = function(lowercase) {
