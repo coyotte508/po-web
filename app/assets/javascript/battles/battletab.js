@@ -182,7 +182,7 @@ function BattleTab(id) {
     });
 
     this.chat.on("chat", function(msg) {
-        self.battle.sendMessage(msg);
+        self.battle.sendMessage(e_filter(msg));
     });
 
     this.id = id;
@@ -526,7 +526,7 @@ BattleTab.prototype.print = function(msg, args) {
         }
     }
 
-    this.chat.insertMessage(msg, {linebreak: linebreak});
+    this.chat.insertMessage(e_filter(msg)), {linebreak: linebreak});
     this.activateTab();
 
     if(!window.isActive && this.hadFocus && webclientUI.battleNotifications) {

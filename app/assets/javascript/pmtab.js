@@ -17,7 +17,7 @@ utils.inherits(PMTab, BaseTab);
 var pmtab = PMTab.prototype;
 
 pmtab.sendMessage = function(msg) {
-    webclient.sendPM(msg, this.id);
+    webclient.sendPM(e_filter(msg), this.id);
 };
 
 pmtab.onSetCurrent = function() {
