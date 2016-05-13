@@ -139,6 +139,7 @@ ChannelHolder.prototype.newChannel = function (id, name) {
 
 ChannelHolder.prototype.removeChannel = function(id) {
     if (!(id in this.channels)) {
+        console.log("Cannot destroy nonexistent channel: " + id);
         return;
     }
 
@@ -157,7 +158,9 @@ ChannelHolder.prototype.joinChannel = function(id) {
              this.updateAutoJoin();
         }
         this.trigger("joinchannel", id);
-    }
+    } else {
+        console.log("Channel already joined: " + id);
+     }
 };
 
 ChannelHolder.prototype.channelsByName = function(lowercase) {
@@ -171,9 +174,11 @@ ChannelHolder.prototype.channelsByName = function(lowercase) {
 ChannelHolder.prototype.leaveChannel = function(id) {
     id = +id;
     var index = this.joinedChannels.indexOf(id);
-    if (index !== -1) {
+    if (index > -1) {
         this.joinedChannels.splice(index, 1);
         this.updateAutoJoin();
         this.trigger("leavechannel", id);
+    } else {
+        console.log("Channel not joined: " + id);
     }
 };
