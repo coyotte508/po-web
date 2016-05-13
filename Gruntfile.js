@@ -23,6 +23,8 @@ module.exports = function(grunt) {
 
   var js_backend = [
     './app/assets/javascript/config.js',
+    './app/assets/javascript/libs/favico.js',
+    './app/assets/javascript/notif.js',
     './app/assets/javascript/libs/riot.js',
     './app/assets/javascript/libs/md5.js',
     './app/assets/javascript/postorage.js',
