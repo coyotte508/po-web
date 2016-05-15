@@ -10,16 +10,16 @@ var notif = {
         animation: "none",
         type: "circle"
     }),
-    count: 0,
+    count: -1,
     one_count: 0,
     update: function() {
         notif.count++
     },
     titleUpdate: function() {
-        1 == notif.count ? 1 == notif.one_count ? notif.faviconNoAnim.badge(notif.count) : (notif.one_count = 1, notif.favicon.badge(notif.count)) : 0 == notif.count ? notif.faviconNoAnim.badge("") : notif.faviconNoAnim.badge(notif.count)
+        1 == notif.count ? 1 == notif.one_count ? notif.faviconNoAnim.badge(notif.count) : (notif.one_count = 1, notif.favicon.badge(notif.count)) : -1 == notif.count ? notif.faviconNoAnim.badge("") : notif.faviconNoAnim.badge(notif.count)
     },
     clear: function() {
-        notif.count = 0, notif.one_count = 0
+        notif.count = -1, notif.one_count = 0
     },
     dec: function() {
         notif.count--, 0 == notif.count && (notif.one_count = 0)
