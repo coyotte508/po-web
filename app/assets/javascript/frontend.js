@@ -27,7 +27,8 @@ var webclientUI = {
         }
 
         /* -1 : no badge, 0+ : badge with 0+ displayed */
-        console.log("Updated badge count: " + total);
+       	notif.count = total
+		notif.titleUpdate();
         //Todo: remove the log and actually add the badge.
     },
 
