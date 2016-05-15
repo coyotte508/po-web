@@ -77,10 +77,14 @@ $(function() {
             <span class="sr-only">Toggle Dropdown</span>
           </button>
           <ul class="dropdown-menu">
+            <center><h4>User</h4></center>
             <li><a href="po:idle/" class="checkbox-dd"><input type="checkbox" id="checkbox-idle-dd"/>&nbsp;Idle</a></li>
+            <center><h4>Chat</h4></center>
             <li><a href="po:timestamps/" class="checkbox-dd"><input type="checkbox" id="checkbox-timestamps-dd"/>&nbsp;Timestamps</a></li>
+            <center><h4>Player List</h4></center>
             <li><a href="po:sortauth/" class="checkbox-dd"><input type="checkbox" id="checkbox-sortauth-dd"/>&nbsp;Sort by auth</a></li>
             <li><a href="po:rainbow/" class="checkbox-dd"><input type="checkbox" id="checkbox-rainbow-dd"/>&nbsp;Colored playerlist</a></li>
+            <center><h4>Client</h4></center>
             <li><a href="po:exitwarning/" class="checkbox-dd"><input type="checkbox" id="checkbox-exitwarning-dd"/>&nbsp;Show Exit Warning</a></li>
             <li><a href="po:simplebattle/" class="checkbox-dd"><input type="checkbox" id="checkbox-simplebattle-dd"/>&nbsp;Simple Battle Window</a></li>
             <li role="separator" class="divider"></li>
