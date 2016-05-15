@@ -211,6 +211,7 @@ var webclientUI = {
         } else {
             buttons = [{
                 label: 'Decline',
+                className: 'btn-red',
                 action: function(dialogItself){
                     webclient.declineChallenge(params);
                     dialogItself.setData("declined", true);
@@ -220,6 +221,7 @@ var webclientUI = {
                 }
             }, {
                 label: 'Accept',
+                className: 'btn-green',
                 action: function(dialogItself){
                     params.team = info.find("#your-team").val();
                     webclient.acceptChallenge(params);
