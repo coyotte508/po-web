@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" prefix="og: http://ogp.me/ns#">
 <head>
   <title>Play Pok&eacute;mon Online!</title>
@@ -113,7 +113,7 @@ $(function() {
           </div>
         </div>
      </form>
-      <div id="playercount" class="hide"></div>
+      <div id="playercount"></div>
       <ul id="playerlist" class="hiddenScroll list-group" tabindex=10 oncontextmenu="return false"></ul>
     </div>
     <div class="flex-column rightbar" id="tabs">
