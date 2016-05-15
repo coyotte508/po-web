@@ -72,6 +72,7 @@ module.exports = function(grunt) {
     './bower_components/typeahead.js/dist/typeahead.jquery.min.js',
     './bower_components/favico.js/favico-0.3.10.min.js',
     './app/assets/javascript/libs/vex.combined.min.js',
+    './app/assets/javascript/notif.js',
     './app/assets/javascript/utils.js',
     './app/assets/javascript/basetab.js',
     './app/assets/javascript/chat.js',
