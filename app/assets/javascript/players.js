@@ -1,4 +1,4 @@
-var namecolorlist = ['#5811b1', '#399bcd', '#0474bb', '#f8760d', '#a00c9e', '#0d762b', '#5f4c00', '#9a4f6d', '#d0990f', '#1b1390', '#028678', '#0324b1'];
+var namecolorlist = ["#5811b1", "#399bcd", "#0474bb", "#f8760d", "#a00c9e", "#0d762b", "#5f4c00", "#9a4f6d", "#d0990f", "#1b1390", "#028678", "#0324b1"];
 
 function PlayerHolder() {
     $.observable(this);
@@ -10,7 +10,7 @@ function PlayerHolder() {
     this.friends = [];
 }
 
-PlayerHolder.prototype.login = function (id, info) {
+PlayerHolder.prototype.login = function(id, info) {
     var obj = {};
 
     obj[id] = info;
@@ -22,11 +22,11 @@ PlayerHolder.prototype.login = function (id, info) {
     this.trigger("login", id, info);
 };
 
-PlayerHolder.prototype.hasPlayer = function (pid) {
+PlayerHolder.prototype.hasPlayer = function(pid) {
     return pid in this.players;
 };
 
-PlayerHolder.prototype.addPlayer = function (players) {
+PlayerHolder.prototype.addPlayer = function(players) {
     var playerObj,
         player, name,
         id, x;
@@ -72,7 +72,7 @@ PlayerHolder.prototype.optionsChange = function(player) {
     this.trigger("playerupdated", +id, playerObj);
 };
 
-PlayerHolder.prototype.addFriend = function (id) {
+PlayerHolder.prototype.addFriend = function(id) {
     if (this.friends.indexOf(id) !== -1) {
         return;
     }
@@ -85,7 +85,7 @@ PlayerHolder.prototype.addFriend = function (id) {
     this.trigger("friendadd", id);
 };
 
-PlayerHolder.prototype.addIgnore = function (id) {
+PlayerHolder.prototype.addIgnore = function(id) {
     if (id in this.ignores) {
         return;
     }
@@ -98,7 +98,7 @@ PlayerHolder.prototype.addIgnore = function (id) {
     this.trigger("ignoreadd", id);
 };
 
-PlayerHolder.prototype.removeIgnore = function (id) {
+PlayerHolder.prototype.removeIgnore = function(id) {
     if (!(id in this.ignores)) {
         return;
     }
@@ -112,7 +112,7 @@ PlayerHolder.prototype.removeIgnore = function (id) {
 };
 
 // Returns true if the player was ignored, false otherwise.
-PlayerHolder.prototype.toggleIgnore = function (id) {
+PlayerHolder.prototype.toggleIgnore = function(id) {
     if (id in this.ignores) {
         this.removeIgnore(id);
         return false;
@@ -126,7 +126,7 @@ PlayerHolder.prototype.isIgnored = function(id) {
     return id in this.players && this.players[id].ignored;
 };
 
-PlayerHolder.prototype.removePlayer = function (id) {
+PlayerHolder.prototype.removePlayer = function(id) {
     var player = this.players[id],
         wasFriend = false;
 
@@ -144,7 +144,7 @@ PlayerHolder.prototype.removePlayer = function (id) {
     delete this.players[id];
 };
 
-PlayerHolder.prototype.player = function (pid) {
+PlayerHolder.prototype.player = function(pid) {
     var pidlc;
 
     if (pid in this.players) {
@@ -156,22 +156,22 @@ PlayerHolder.prototype.player = function (pid) {
     return null;
 };
 
-PlayerHolder.prototype.name = function (pid) {
+PlayerHolder.prototype.name = function(pid) {
     return ((pid in this.players) ? this.players[pid].name : "???");
 };
 
-PlayerHolder.prototype.auth = function (pid) {
+PlayerHolder.prototype.auth = function(pid) {
     return ((pid in this.players) ? this.players[pid].auth : 0);
 };
 
-PlayerHolder.prototype.id = function (name) {
+PlayerHolder.prototype.id = function(name) {
     var player = this.names[name.toLowerCase()],
         lname = name.toLowerCase();
 
     return (lname in this.names) ? this.names[lname].id : -1;
 };
 
-PlayerHolder.prototype.testPlayerOnline = function (player) {
+PlayerHolder.prototype.testPlayerOnline = function(player) {
     var channels = webclient.channels.channels,
         i;
 
@@ -188,7 +188,7 @@ PlayerHolder.prototype.testPlayerOnline = function (player) {
     this.removePlayer(player);
 };
 
-PlayerHolder.prototype.color = function (id) {
+PlayerHolder.prototype.color = function(id) {
     var player = this.player(id);
 
     if (!player) {
@@ -198,7 +198,7 @@ PlayerHolder.prototype.color = function (id) {
     return player.color || namecolorlist[id % namecolorlist.length];
 };
 
-PlayerHolder.prototype.away = function (id) {
+PlayerHolder.prototype.away = function(id) {
     var player = this.player(id);
     return player ? player.away : false;
 };

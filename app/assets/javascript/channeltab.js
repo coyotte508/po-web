@@ -20,10 +20,18 @@ function ChannelTab(id, name) {
     }
 
     this.channel.off("*");
-    this.channel.on("setplayers", function(ids) {self.setPlayers(ids);});
-    this.channel.on("playeradd", function(id) {self.newPlayer(id);});
-    this.channel.on("playerremove", function(id) {self.removePlayer(id);});
-    this.channel.on("changename", function(name) {self.changeName(name);});
+    this.channel.on("setplayers", function(ids) {
+        self.setPlayers(ids);
+    });
+    this.channel.on("playeradd", function(id) {
+        self.newPlayer(id);
+    });
+    this.channel.on("playerremove", function(id) {
+        self.removePlayer(id);
+    });
+    this.channel.on("changename", function(name) {
+        self.changeName(name);
+    });
     // var $chan = $("#channel-" + id);
     // if ($chan.length === 0 || $chan.data('initialized') === false) {
     //     /* Create new tab */
@@ -56,7 +64,7 @@ ChannelTab.prototype.getPlayers = function() {
     return Object.keys(this.channel.players);
 };
 
-ChannelTab.prototype.setPlayers = function (players) {
+ChannelTab.prototype.setPlayers = function(players) {
     // var len, id, i;
 
     // /* The server 'unclosed' us, so removing server close if there */
@@ -76,11 +84,11 @@ ChannelTab.prototype.setPlayers = function (players) {
     }
 };
 
-ChannelTab.prototype.newPlayer = function (player) {
-    //this.players[player] = true;
+ChannelTab.prototype.newPlayer = function(player) {
+    // this.players[player] = true;
 
     if (player != webclient.ownId && webclientUI.channels.chanEventsEnabled(this.channel.id) && !this.channel.loadingPlayers) {
-        this.printHtml('<span class="player-join">' + utils.escapeHtml(webclient.players.name(player)) + ' joined the channel.');
+        this.printHtml("<span class=\"player-join\">" + utils.escapeHtml(webclient.players.name(player)) + " joined the channel.");
     }
 
     if (this.isCurrent()) {
@@ -88,7 +96,7 @@ ChannelTab.prototype.newPlayer = function (player) {
     }
 };
 
-ChannelTab.prototype.removePlayer = function (player) {
+ChannelTab.prototype.removePlayer = function(player) {
     // delete this.players[player];
 
     // if (player === webclient.ownId) {
@@ -101,7 +109,7 @@ ChannelTab.prototype.removePlayer = function (player) {
     // }
 
     if (webclientUI.channels.chanEventsEnabled(this.channel.id) && !this.channel.loadingPlayers) {
-        this.printHtml('<span class="player-leave">' + utils.escapeHtml(webclient.players.name(player)) + ' left the channel.');
+        this.printHtml("<span class=\"player-leave\">" + utils.escapeHtml(webclient.players.name(player)) + " left the channel.");
     }
 
     if (this.isCurrent()) {
@@ -113,7 +121,7 @@ ChannelTab.prototype.hasPlayer = function(player) {
 //    return player in this.players;
 };
 
-ChannelTab.prototype.print = function (msg, html, raw) {
+ChannelTab.prototype.print = function(msg, html, raw) {
     // var pref, id, auth;
 
     // if (raw !== true) {
@@ -141,7 +149,7 @@ ChannelTab.prototype.print = function (msg, html, raw) {
     //                 pref = "<span class='script-message'>" + pref + ":</span>";
     //             } else {
     //                 this.shown[id] = true;
-                       pref = "<a href='po:info/" + id + "'><span class='player-message' style='color: " + webclient.players.color(id) + "' oncontextmenu='return false'>" + utils.rank(auth) + utils.rankStyle(pref + ":", auth) + "</span></a>";
+    //                 pref = "<a href='po:info/" + id + "'><span class='player-message' style='color: " + webclient.players.color(id) + "' oncontextmenu='return false'>" + utils.rank(auth) + utils.rankStyle(pref + ":", auth) + "</span></a>";
     //                 this.activateTab();
     //             }
 
@@ -167,7 +175,9 @@ ChannelTab.prototype.printMessage = function(msg, html) {
     var useTimeStamps = true;
 
     var ownname = webclient.ownName();
-    if (ownname !== "???") { //Because webclient.ownName() returns "???" when starting up the client and that messes with the RegExp
+    if (ownname !== "???") {
+        // Because webclient.ownName() returns "???" when starting up the
+        // client and that messes with the RegExp
         var ex = new RegExp("\\b" + ownname + "\\b", "gi");
         if (ex.test(msg.indexOf(":") !== -1 ? msg.substr(msg.indexOf(":")) : msg)) {
             this.flashTab();
@@ -176,7 +186,7 @@ ChannelTab.prototype.printMessage = function(msg, html) {
             /* When flashed, also display a notification */
             if (!window.isActive) {
                 if ("Notification" in window) {
-                    var notification = new window.Notification("In #"+this.name + ": ", {body: html ? utils.stripHtml(msg): msg});
+                    var notification = new window.Notification("In #" + this.name + ": ", { body: html ? utils.stripHtml(msg) : msg });
                 }
             }
         }
@@ -211,7 +221,7 @@ ChannelTab.prototype.printMessage = function(msg, html) {
             }
 
             msg = pref + utils.addChannelLinks(msg.slice(msg.indexOf(":") + 1), webclient.channels.channelsByName(true));
-            //msg = pref + msg.slice(msg.indexOf(":") + 1);
+            // msg = pref + msg.slice(msg.indexOf(":") + 1);
         }
     }
 
@@ -219,15 +229,15 @@ ChannelTab.prototype.printMessage = function(msg, html) {
         msg = "<mark>" + msg + "</mark>";
     }
 
-    this.chat.insertMessage(msg, {timestamps: webclientUI.timestamps && useTimeStamps});
-    //$(".chat").html($(".chat").html() + utils.stripHtml(msg) + "<br>");
+    this.chat.insertMessage(msg, { timestamps: webclientUI.timestamps && useTimeStamps });
+    // $(".chat").html($(".chat").html() + utils.stripHtml(msg) + "<br>");
 };
 
-ChannelTab.prototype.sendMessage = function (message) {
+ChannelTab.prototype.sendMessage = function(message) {
     webclient.sendMessage(message, this.id);
 };
 
-ChannelTab.prototype.changeName = function (name) {
+ChannelTab.prototype.changeName = function(name) {
     this.name = name;
 
     // $("#channel-tabs > ul a[href=\"#channel-" + this.id + "\"]").html("<span>" + webclient.classes.BaseTab.makeName(name) + '</span>');
@@ -238,6 +248,6 @@ ChannelTab.prototype.disconnect = function() {
     // this.players = {};
 };
 
-ChannelTab.prototype.remove = function () {
-    //this.trigger("remove");
+ChannelTab.prototype.remove = function() {
+    // this.trigger("remove");
 };

@@ -136,12 +136,88 @@ Poke.prototype.setElement = function(element) {
 
     this.ui = {};
     this.ui.sprite = element.find(".tb-sprite");
-    this.ui.type1  = element.find(".tb-type1");
-    this.ui.type2  = element.find(".tb-type2");
+    this.ui.type1 = element.find(".tb-type1");
+    this.ui.type2 = element.find(".tb-type2");
     this.ui.evs = [];
     this.ui.evVals = [];
     this.ui.ivVals = [];
     this.ui.stats = [];
+
+    function updateEv() {
+        var i = $(this).data("slot");
+        self.evs[i] = +$(this).val();
+        if (self.evs[i] > 252) {
+            self.evs[i] = 252;
+            $(this).val(self.evs[i]);
+        }
+        self.correctSurplus();
+        if (self.gen && self.gen.num <= 2 && i == 3) {
+            // link sp.atk to sp.def
+            self.evs[4] = self.evs[i];
+            self.updateStatGui(4);
+        }
+        self.updateStatGui(i);
+    }
+
+    function updateIv() {
+        var maxIV = (self.gen && self.gen.num <= 2 ? 15 : 31);
+        var i = $(this).data("slot");
+        self.ivs[i] = +$(this).val();
+        if (self.ivs[i] > maxIV) {
+            self.ivs[i] = maxIV;
+            $(this).val(self.ivs[i]);
+        }
+        self.updateStatGui(i);
+        if (self.gen && self.gen.num <= 2) {
+            if (i === 3) {
+                self.ivs[4] = self.ivs[3];
+                self.ui.ivVals[4].data("slot", 4).val(self.ivs[4]);
+                self.updateStatGui(4);
+            }
+            self.ivs[0] = PokeInfo.calculateHpIv(self.ivs);
+            self.ui.ivVals[0].data("slot", 0).val(self.ivs[0]);
+            self.updateStatGui(0);
+            // could become shiny upon IV change in gen 2
+            if (self.gen.num === 2) {
+                self.ui.sprite.attr("src", PokeInfo.sprite(self));
+            }
+        }
+    }
+
+    function leftClickStat() {
+        var stat = $(this).closest(".tb-ev-row").attr("evslot");
+        if (stat === 0 || self.gen && self.gen.num <= 2) {
+            return;
+        }
+        var negstat = NatureInfo.reducedStat(self.nature);
+        if (negstat == -1 || negstat == stat) {
+            negstat = stat === 1 ? 2 : 1;
+        }
+        self.nature = NatureInfo.getNatureForBoosts(stat, negstat);
+        self.updateStatsGui();
+        self.ui.nature.val(self.nature);
+    }
+
+    function rightClickStat() {
+        var stat = $(this).closest(".tb-ev-row").attr("evslot");
+        if (stat === 0 || self.gen && self.gen.num <= 2) {
+            return undefined;
+        }
+        var negstat = NatureInfo.reducedStat(self.nature);
+        if (negstat == -1 || negstat == stat) {
+            negstat = stat == 1 ? 2 : 1;
+        }
+        self.nature = NatureInfo.getNatureForBoosts(negstat, stat);
+        self.updateStatsGui();
+        self.ui.nature.val(self.nature);
+
+        return false;
+    }
+
+    function displayHiddenPower() {
+        self.updateDescription({ "type": "iv" });
+    }
+
     for (var i = 0; i < 6; i++) {
         this.ui.evs[i] = element.find(".tb-ev-row-" + i + " .tb-ev-slider");
         this.ui.evVals[i] = element.find(".tb-ev-row-" + i + " .tb-ev-value");
@@ -151,86 +227,16 @@ Poke.prototype.setElement = function(element) {
             // formatter: function(value) {
             //     return 'Current EV: ' + value;
             // }
-        }).data("slot", i).on("change", function(event) {
-            var i = $(this).data("slot");
-            self.evs[i] = event.value.newValue;
-            self.correctSurplus();
-            if (self.gen && self.gen.num <= 2 && i == 3) {
-                // link sp.atk to sp.def
-                self.evs[4] = self.evs[i];
-                self.updateStatGui(4);
-            }
-            self.updateStatGui(i);
-        });
-        this.ui.evVals[i].data("slot", i).on("change", function() {
-            var i = $(this).data("slot");
-            self.evs[i] = +$(this).val();
-            if (self.evs[i] > 252) {
-                self.evs[i] = 252;
-                $(this).val(self.evs[i]);
-            }
-            self.correctSurplus();
-            if (self.gen && self.gen.num <= 2 && i == 3) {
-                // link sp.atk to sp.def
-                self.evs[4] = self.evs[i];
-                self.updateStatGui(4);
-            }
-            self.updateStatGui(i);
-        });
-        this.ui.ivVals[i].data("slot", i).on("change", function() {
-            var maxIV = (self.gen && self.gen.num <= 2 ? 15 : 31);
-            var i = $(this).data("slot");
-            self.ivs[i] = +$(this).val();
-            if (self.ivs[i] > maxIV) {
-                self.ivs[i] = maxIV;
-                $(this).val(self.ivs[i]);
-            }
-            self.updateStatGui(i);
-            if (self.gen && self.gen.num <= 2) {
-                if (i === 3) {
-                    self.ivs[4] = self.ivs[3];
-                    self.ui.ivVals[4].data("slot", 4).val(self.ivs[4]);
-                    self.updateStatGui(4);
-                }
-                self.ivs[0] = PokeInfo.calculateHpIv(self.ivs);
-                self.ui.ivVals[0].data("slot", 0).val(self.ivs[0]);
-                self.updateStatGui(0);
-                // could become shiny upon IV change in gen 2
-                if (self.gen.num === 2) {
-                    self.ui.sprite.attr("src", PokeInfo.sprite(self));
-                }
-            }
-        }).on("focusin change", function() {
-            self.updateDescription({"type": "iv"});
-        });
+        }).data("slot", i).on("change", updateEv);
+        this.ui.evVals[i].data("slot", i)
+            .on("change", updateEv);
+        this.ui.ivVals[i].data("slot", i)
+            .on("change", updateIv)
+            .on("focusin change", displayHiddenPower);
 
-        element.find(".tb-ev-name, .tb-stat").on("click", function() {
-            var stat = $(this).closest(".tb-ev-row").attr("evslot");
-            if (stat === 0 || self.gen && self.gen.num <= 2) {
-                return;
-            }
-            var negstat = NatureInfo.reducedStat(self.nature);
-            if (negstat == -1 || negstat == stat) {
-                negstat = stat === 1 ? 2 : 1;
-            }
-            self.nature = NatureInfo.getNatureForBoosts(stat, negstat);
-            self.updateStatsGui();
-            self.ui.nature.val(self.nature);
-        }).on("contextmenu", function() {
-            var stat = $(this).closest(".tb-ev-row").attr("evslot");
-            if (stat === 0 || self.gen && self.gen.num <= 2) {
-                return;
-            }
-            var negstat = NatureInfo.reducedStat(self.nature);
-            if (negstat == -1 || negstat == stat) {
-                negstat = stat == 1 ? 2 : 1;
-            }
-            self.nature = NatureInfo.getNatureForBoosts(negstat, stat);
-            self.updateStatsGui();
-            self.ui.nature.val(self.nature);
-
-            return false;
-        });
+        element.find(".tb-ev-name, .tb-stat")
+            .on("click", leftClickStat)
+            .on("contextmenu", rightClickStat);
     }
     this.ui.moves = element.find(".tb-move-selection");
     this.ui.poke = element.find(".tb-poke-selection");
@@ -244,22 +250,28 @@ Poke.prototype.setElement = function(element) {
     this.ui.ability.on("change", function() {
         self.ability = $(this).val();
     }).on("focusin change", function() {
-        self.updateDescription({"type": "ability"});
+        self.updateDescription({ "type": "ability" });
     });
 
     this.ui.item.on("focusin", function() {
-        self.updateDescription({"type": "item", "item" : self.item});
+        self.updateDescription({
+            "type": "item",
+            "item": self.item
+        });
     });
 
     this.ui.poke.on("focusin", function() {
-        self.updateDescription({"type": "pokemon", "poke": self});
+        self.updateDescription({
+            "type": "pokemon",
+            "poke": self
+        });
     });
 
     this.ui.nature.on("change", function() {
         self.nature = $(this).val();
         self.updateStatsGui();
     }).on("focusin", function() {
-        self.updateDescription({"type": "nature"});
+        self.updateDescription({ "type": "nature" });
     });
 
     this.ui.level.on("change", function() {
@@ -327,17 +339,17 @@ Poke.prototype.updateDescription = function(what) {
         var html = $(
             "<div class='form-group'><select class='form-control tb-hidden-power'></select>" +
             "<select class='form-control tb-hidden-power-ivs'></select></div>");
-        this.ui.desc.html('');
+        this.ui.desc.html("");
         this.ui.desc.append(html);
         addHpStuff(this.ui.desc);
     } else if (what.type === "pokemon") {
         var links = [
             " - <a href='http://veekun.com/dex/pokemon/" + PokeInfo.name(what.poke.num).toLowerCase() + "'>Veekun</a>"
         ].join("<br/>");
-        this.ui.desc.html('');
+        this.ui.desc.html("");
         this.ui.desc.append($("<div class='col-sm-6'>").html(links));
-        this.ui.desc.append($("<div class='col-sm-6'>").html('<div class="checkbox tb-shiny-container"><label><input type="checkbox" class="shiny-input"> Shiny</label></div>')
-                                                       .append('<select class="form-control smogon-set-selection"><option value="none">Smogon sets</option></select>'));
+        this.ui.desc.append($("<div class='col-sm-6'>").html("<div class=\"checkbox tb-shiny-container\"><label><input type=\"checkbox\" class=\"shiny-input\"> Shiny</label></div>")
+                                                       .append("<select class=\"form-control smogon-set-selection\"><option value=\"none\">Smogon sets</option></select>"));
         if (this.gen && this.gen.num === 1) {
             $(".tb-shiny-container").hide();
         }
@@ -396,7 +408,7 @@ Poke.prototype.updateDescription = function(what) {
             "<img src='" + ItemInfo.itemSprite(what.item) +
             "' class='tb-item-img'/> - " + ItemInfo.desc(what.item));
         // some past gen images don't exist
-        $(".tb-item-img").error(function () {
+        $(".tb-item-img").error(function() {
             el.html(ItemInfo.desc(what.item));
         });
     } else if (what.type === "ability") {
@@ -420,7 +432,7 @@ Poke.prototype.updateSets = function() {
 
     var elem = this.ui.desc.find(".smogon-set-selection");
     for (var name in sets) {
-        elem.append($("<option>").attr("value",JSON.stringify(sets[name])).text(name));
+        elem.append($("<option>").attr("value", JSON.stringify(sets[name])).text(name));
     }
 
     elem.on("change", function() {
@@ -437,7 +449,12 @@ Poke.prototype.updateSets = function() {
         if (set.ability) res.push("Trait: " + set.ability);
         if (set.nature) res.push(set.nature + " nature");
         var corr = {
-            "hp": "HP", "at": "Atk", "df": "Def", "sa": "SpA", "sd": "SpD", "sp": "Spe"
+            "hp": "HP",
+            "at": "Atk",
+            "df": "Def",
+            "sa": "SpA",
+            "sd": "SpD",
+            "sp": "Spe"
         };
         if (set.evs) {
             var evs = [];
@@ -531,7 +548,10 @@ Poke.prototype.updateGui = function() {
 
     if (this.data.moveNames.length === 0) {
         for (var m in this.data.allMoves) {
-            this.data.moveNames.push({value: MoveInfo.name(this.data.allMoves[m]), id: this.data.allMoves[m]});
+            this.data.moveNames.push({
+                value: MoveInfo.name(this.data.allMoves[m]),
+                id: this.data.allMoves[m]
+            });
         }
         this.data.moveNames.sort(function(a, b) {
             return a.value > b.value;
@@ -600,28 +620,30 @@ Poke.prototype.updateGui = function() {
     this.ui.nature.val(this.nature);
     this.ui.level.val(this.level);
 
-    var genderButtons = ['<span class="btn btn-default btn-sm tb-gender tb-gender-0" title="Genderless"><input type="radio"><i class="fa fa-dot-circle-o"></i></span>',
-            '<span class="btn btn-default btn-sm tb-gender tb-gender-1"><input type="radio" title="Male"><i class="fa fa-mars"></i></span>',
-            '<span class="btn btn-default btn-sm tb-gender tb-gender-2"><input type="radio" title="Female"><i class="fa fa-venus"></i></span>'];
+    var genderButtons = ["<span class=\"btn btn-default btn-sm tb-gender tb-gender-0\" title=\"Genderless\"><input type=\"radio\"><i class=\"fa fa-dot-circle-o\"></i></span>",
+            "<span class=\"btn btn-default btn-sm tb-gender tb-gender-1\"><input type=\"radio\" title=\"Male\"><i class=\"fa fa-mars\"></i></span>",
+            "<span class=\"btn btn-default btn-sm tb-gender tb-gender-2\"><input type=\"radio\" title=\"Female\"><i class=\"fa fa-venus\"></i></span>"];
     if (this.data.gender <= 2) {
         this.ui.genders.html(genderButtons[this.data.gender]);
     } else {
-        this.ui.genders.html(genderButtons[1]+genderButtons[2]);
+        this.ui.genders.html(genderButtons[1] + genderButtons[2]);
     }
 
-    this.ui.genders.find(".tb-gender-"+this.gender).addClass("active");
+    this.ui.genders.find(".tb-gender-" + this.gender).addClass("active");
 
-    this.ui.moves.typeahead("destroy").typeahead({
-         hint: true,
-         highlight: false,
-         minLength: 0
-    },
-    {
-        name: "moves",
-        display: "value",
-        limit: 150,
-        source: substringMatcher(this.data.moveNames)
-    }).on("typeahead:select", function(event, sugg) {
+    this.ui.moves.typeahead("destroy").typeahead(
+        {
+            hint: true,
+            highlight: false,
+            minLength: 0
+        },
+        {
+            name: "moves",
+            display: "value",
+            limit: 150,
+            source: substringMatcher(this.data.moveNames)
+        }
+    ).on("typeahead:select", function(event, sugg) {
         self.moves[$(this).attr("slot")] = sugg.id;
 
         if (sugg.value == "Frustration") {
@@ -630,16 +652,25 @@ Poke.prototype.updateGui = function() {
             self.happiness = 255;
         }
     }).on("typeahead:autocomplete typeahead:select typeahead:cursorchange", function(event, sugg) {
-        self.updateDescription({"type":"move", "move":sugg.id});
+        self.updateDescription({
+            "type": "move",
+            "move": sugg.id
+        });
     }).on("focusin", function() {
-        self.updateDescription({"type":"move", "move":self.moves[$(this).attr("slot")]});
+        self.updateDescription({
+            "type": "move",
+            "move": self.moves[$(this).attr("slot")]
+        });
     });
 
     for (var i = 0; i < 4; i++) {
         this.ui.moves.eq(i).typeahead("val", this.moves[i] === 0 ? "" : MoveInfo.name(this.moves[i]));
     }
 
-    this.updateDescription({"type": "pokemon", "poke": this});
+    this.updateDescription({
+        "type": "pokemon",
+        "poke": this
+    });
     this.updatePreview();
 };
 
@@ -647,7 +678,7 @@ Poke.prototype.updatePreview = function() {
     this.ui.preview.html("<input type='radio'><img src='" + PokeInfo.icon(this) + "' />&nbsp;" + (this.nick || PokeInfo.name(this)));
 };
 
-function Teambuilder (content) {
+function Teambuilder(content) {
 
     var self = this;
 
@@ -659,14 +690,14 @@ function Teambuilder (content) {
 
     for (var poke in team.pokes) {
         team.pokes[poke].setElement(content.find("#tb-poke-" + poke));
-        var pokeprev = content.find(".tb-poke-preview-"+poke);
+        var pokeprev = content.find(".tb-poke-preview-" + poke);
         team.pokes[poke].ui.preview = pokeprev;
         this.prevs[poke] = pokeprev;
         team.pokes[poke].updatePreview();
         team.pokes[poke].illegal = team.illegal;
     }
 
-    //setTimeout(function(){team.pokes[0].loadGui()});
+    // setTimeout(function(){team.pokes[0].loadGui()});
 
     setTimeout(function() {
         self.updatePokeSelections();
@@ -674,7 +705,7 @@ function Teambuilder (content) {
             var poke = self.team.pokes[$(this).attr("slot")];
             poke.load(sugg);
             poke.updateGui();
-            $(this).typeahead('close');
+            $(this).typeahead("close");
         })/*
         updateGui is already called, which itself calls poke.updateDescription();
         .on("typeahead:select typeahead:autocomplete typeahead:cursorchange", function(event, sugg) {
@@ -685,11 +716,14 @@ function Teambuilder (content) {
         self.content.find(".tb-item-selection").on("typeahead:select", function(event, sugg) {
             var poke = self.team.pokes[$(this).attr("slot")];
             poke.item = sugg.num;
-            $(this).typeahead('close');
+            $(this).typeahead("close");
         }).on("typeahead:select typeahead:autocomplete typeahead:cursorchange", function(event, sugg) {
             var poke = self.team.pokes[$(this).attr("slot")];
-            poke.updateDescription({"type": "item", "item": sugg.num});
-        })
+            poke.updateDescription({
+                "type": "item",
+                "item": sugg.num
+            });
+        });
     });
 
     var natures = "";
@@ -702,7 +736,7 @@ function Teambuilder (content) {
         // if (boost != -1) {
         //     name += " (+" + shortStats[boost] + ", -" + shortStats[hinder] + ")";
         // }
-        natures += "<option value='" + i  + "'>" + name + "</option>";
+        natures += "<option value='" + i + "'>" + name + "</option>";
     }
     content.find(".tb-nature-selection").html(natures);
 
@@ -734,7 +768,10 @@ function Teambuilder (content) {
         var retC = [];
         for (var x in tiers) {
             if (typeof (tiers[x]) == "string") {
-                retS.push({"value": tiers[x], "category": parent});
+                retS.push({
+                    "value": tiers[x],
+                    "category": parent
+                });
             } else {
                 var tmp = addTiersToList(tiers[x].name, tiers[x].tiers);
                 retC = tmp.concat(retC);
@@ -749,17 +786,17 @@ function Teambuilder (content) {
         minLength: 0,
         highlight: false
     }, {
-        name: 'tiers',
+        name: "tiers",
         source: substringMatcher(list),
-        display: 'value',
+        display: "value",
         limit: 30,
         templates: {
-          suggestion: Handlebars.compile('<div>{{value}} - <span class="tb-tier-category">{{category}}</span></div>')
+            suggestion: Handlebars.compile("<div>{{value}} - <span class=\"tb-tier-category\">{{category}}</span></div>")
         }
     }).on("typeahead:select", function(event, sugg) {
         sugg = sugg.value;
         team.tier = sugg;
-        $(this).typeahead('close');
+        $(this).typeahead("close");
     }).typeahead("val", team.tier || "");
 
     content.find(".tb-select-all").on("click", function() {
@@ -767,7 +804,7 @@ function Teambuilder (content) {
     });
 
     content.find(".tb-import-btn").on("click", function() {
-        var _pokes = self.content.find("#tb-importable-edit").val().replace(/^\s*[\r\n]/gm, '\n').replace(/\r/g, '\n').split("\n\n");
+        var _pokes = self.content.find("#tb-importable-edit").val().replace(/^\s*[\r\n]/gm, "\n").replace(/\r/g, "\n").split("\n\n");
         for (var i in _pokes) {
             _pokes[i] = _pokes[i].trim();
         }
@@ -778,7 +815,7 @@ function Teambuilder (content) {
             }
         }
         if (pokes.length == 0) {
-            //no poke
+            // no poke
             return;
         } else if (pokes.length == 1) {
             /* Import only one poke */
@@ -789,9 +826,9 @@ function Teambuilder (content) {
             self.team.pokes[tab].import(pokes[0]);
             self.team.pokes[tab].updateGuiIfLoaded();
 
-            self.onImportable();//hack to switch back
+            self.onImportable(); // hack to switch back
         } else {
-            //Update all pokes and go back to home tab
+            // Update all pokes and go back to home tab
             for (var i in pokes) {
                 self.team.pokes[i].import(pokes[i]);
                 self.team.pokes[i].updatePreview();
@@ -857,9 +894,9 @@ function Teambuilder (content) {
             return;
         }
         current.removeClass("active");
-        var other = self.content.find(".tb-poke-preview:eq(" + (slot-1) + ")");
-        //Have fun making a loop
-        switchPokes(self.team.pokes[slot-1], self.team.pokes[slot]);
+        var other = self.content.find(".tb-poke-preview:eq(" + (slot - 1) + ")");
+        // Have fun making a loop
+        switchPokes(self.team.pokes[slot - 1], self.team.pokes[slot]);
         other.addClass("active");
     });
     content.find(".tb-down-btn").on("click", function() {
@@ -869,9 +906,9 @@ function Teambuilder (content) {
             return;
         }
         current.removeClass("active");
-        var other = self.content.find(".tb-poke-preview:eq(" + (slot+1) + ")");
-        //Have fun making a loop
-        switchPokes(self.team.pokes[slot+1], self.team.pokes[slot]);
+        var other = self.content.find(".tb-poke-preview:eq(" + (slot + 1) + ")");
+        // Have fun making a loop
+        switchPokes(self.team.pokes[slot + 1], self.team.pokes[slot]);
         other.addClass("active");
     });
 
@@ -884,7 +921,7 @@ function Teambuilder (content) {
     content.find("#tb-save-form").on("submit", function(event) {
         event.preventDefault();
 
-        //save team
+        // save team
         var name = self.teamName.val().replace(/,/g, "");
         self.team.name = name;
         self.savedTeams[name] = webclient.getTeamData(self.team);
@@ -896,9 +933,15 @@ function Teambuilder (content) {
     content.closest(".modal-dialog").addClass("modal-teambuilder");
 
 
-    deletedTeams.tagsinput({"freeInput": false, "tagClass": "label label-default"});
+    deletedTeams.tagsinput({
+        "freeInput": false,
+        "tagClass": "label label-default"
+    });
     deletedTeams.tagsinput("removeAll");
-    storedTeams.tagsinput({"freeInput": false, "tagClass": "label label-primary"});
+    storedTeams.tagsinput({
+        "freeInput": false,
+        "tagClass": "label label-primary"
+    });
     storedTeams.tagsinput("removeAll");
     for (var i in self.savedTeams) {
         storedTeams.tagsinput("add", i);
@@ -1024,7 +1067,7 @@ Teambuilder.prototype.onNewTeam = function() {
     this.updateGui();
 };
 
-//Todo: generate those automatically?
+// Todo: generate those automatically?
 Teambuilder.genShortHands = {
     "Red/Blue": "Blue",
     "Stadium w/ Tradebacks": "Stadium+",
@@ -1079,7 +1122,7 @@ Teambuilder.prototype.updatePokeSelections = function() {
     this.content.find(".tb-poke-selection").typeahead("destroy").typeahead(
         {
             hint: true,
-            highlight: false,
+            highlight: false
         },
         {
             name: "pokes",

@@ -2,7 +2,7 @@
 
 /* dealWithXxxx functions are all called from dealWithCommand */
 battledata.dealWithTurn = function(params) {
-    this.print("<h2>Turn " + params.turn + "</h2>", {"css": "turn"});
+    this.print("<h2>Turn " + params.turn + "</h2>", { "css": "turn" });
     this.trigger("turn", params.turn);
 };
 
@@ -13,7 +13,9 @@ battledata.dealWithBlank = function(params) {
 
     if (this.speed < 10) {
         this.pause();
-        setTimeout(function(){self.unpause();}, 600*this.speed);
+        setTimeout(function() {
+            self.unpause();
+        }, 600 * this.speed);
     }
 };
 
@@ -37,7 +39,7 @@ battledata.dealWithSend = function(params) {
     this.teams[player][params.slot] = this.teams[player][sl];
     this.teams[player][sl] = tmp;
 
-    //this.animator.on("send", params.spot);
+    // this.animator.on("send", params.spot);
 
     this.updateFieldPoke(params.spot);
     this.updateTeamPokes(player, [this.slot(params.spot), params.slot]);
@@ -55,7 +57,7 @@ battledata.dealWithSendback = function(params) {
     var poke = this.pokes[params.spot];
     var pl = this.player(params.spot);
 
-    //this.animator.on("sendback", params.spot);
+    // this.animator.on("sendback", params.spot);
 
     if (pl == this.myself) {
         var moves = this.teams[pl][params.spot].moves;
@@ -103,7 +105,7 @@ battledata.dealWithSubformechange = function(params) {
 battledata.dealWithFormechange = function(params) {
     var pokeObject = PokeInfo.toObject(params.newforme);
     $.extend(this.teams[params.player][params.slot], pokeObject);
-    $.extend(this.pokes[this.spot(params.player,params.slot)], pokeObject);
+    $.extend(this.pokes[this.spot(params.player, params.slot)], pokeObject);
 
     this.updateTeamPokes(params.player, [params.slot]);
 
@@ -116,7 +118,7 @@ battledata.dealWithTeampreview = function(params) {
 
     var yourTeam = [];
     var oppTeam = [];
-    for (var i = 0; i< 6; i++) {
+    for (var i = 0; i < 6; i++) {
         if (this.teams[this.myself][i].num) {
             yourTeam.push(PokeInfo.name(this.tpoke(this.myself, i)));
         }
@@ -144,7 +146,7 @@ battledata.dealWithPpchange = function(params) {
 battledata.dealWithPpuse = function(params) {
     /* params: amount - the new PP, move - the move used, spot - the poke */
     this.trigger("ppuse", params);
-}
+};
 
 battledata.dealWithMovechange = function(params) {
 
@@ -165,10 +167,10 @@ battledata.dealWithOfferchoice = function(params) {
 };
 
 battledata.dealWithKo = function(params) {
-    //this.animator.on("ko", params.spot);
+    // this.animator.on("ko", params.spot);
     this.print("<strong>" + this.nick(params.spot) + " fainted!</strong>");
 
-    this.pokes[params.spot].status = 31; //ko
+    this.pokes[params.spot].status = 31; // ko
 
     this.trigger("ko", params.spot);
 };
@@ -178,7 +180,7 @@ battledata.dealWithMove = function(params) {
         this.print("<span class='use-battle-move'>" + this.nick(params.spot) + " used <strong class='battle-message-" + TypeInfo.name(MoveInfo.type(params.move)).toLowerCase() + "'>" + MoveInfo.name(params.move) + "</strong>!</span>");
     }
 
-    //this.animator.on("attack", params.spot, params.move);
+    // this.animator.on("attack", params.spot, params.move);
 };
 
 battledata.dealWithHpchange = function(params) {
@@ -186,9 +188,9 @@ battledata.dealWithHpchange = function(params) {
     var current = this.pokes[params.spot].percent;
     if (this.pokes[params.spot].life) {
         this.pokes[params.spot].life = params.newHP;
-        this.pokes[params.spot].percent = Math.floor(params.newHP/this.pokes[params.spot].totalLife*100);
+        this.pokes[params.spot].percent = Math.floor(params.newHP / this.pokes[params.spot].totalLife * 100);
         this.tpoke(params.spot).life = params.newHP;
-        this.tpoke(params.spot).percent = Math.floor(params.newHP/this.pokes[params.spot].totalLife*100);
+        this.tpoke(params.spot).percent = Math.floor(params.newHP / this.pokes[params.spot].totalLife * 100);
     } else {
         this.tpoke(params.spot).percent = params.newHP;
         this.pokes[params.spot].percent = params.newHP;
@@ -196,14 +198,14 @@ battledata.dealWithHpchange = function(params) {
 
     this.updateTeamPokes(this.player(params.spot), [this.slot(params.spot)]);
     /* Is it healing or damage? */
-/*    if (params.newHP > current || params.newHP == (this.pokes[params.spot].totalLife || 100)) {
+    /* if (params.newHP > current || params.newHP == (this.pokes[params.spot].totalLife || 100)) {
         this.addCommand(["-heal", this.spotToPlayer(params.spot), this.pokemonDetails(this.pokes[params.spot])], this.damageCause);
     } else {
         this.addCommand(["-damage", this.spotToPlayer(params.spot), this.pokemonDetails(this.pokes[params.spot])], this.damageCause);
     }
     this.damageCause = {};
     */
-    //this.animator.on("hpchange", params.spot, current, this.pokes[params.spot].percent);
+    // this.animator.on("hpchange", params.spot, current, this.pokes[params.spot].percent);
     var change = current - this.pokes[params.spot].percent;
     /* Woudln't something with old & new HP be more prudent, like the commented line above? */
     this.trigger("hpchange", params.spot, change);
@@ -228,25 +230,32 @@ battledata.dealWithCritical = function(params) {
 };
 
 battledata.dealWithMiss = function(params) {
-    this.print("The attack of "+ this.nick(params.spot) +" missed!");
+    this.print("The attack of " + this.nick(params.spot) + " missed!");
 };
 
 battledata.dealWithAvoid = function(params) {
-    this.print(this.nick(params.spot) +" avoided the attack!");
+    this.print(this.nick(params.spot) + " avoided the attack!");
 };
 
 battledata.dealWithBoost = function(params) {
     if (params.silent) {
         return;
     }
-    if (params.boost > 6) {
-        this.print(this.nick(params.spot) +"'s " + StatInfo.name(params.stat) + " drastically rose!");
-    } else if (params.boost > 0) {
-        this.print(this.nick(params.spot) +"'s " + StatInfo.name(params.stat) + (params.boost > 1 ? (params.boost > 2 ? " drastically " : " sharply ") : "") + " rose!");
+    var boostVerbs = {
+        0: " ",
+        1: " ",
+        2: " sharply ",
+        3: " drastically ",
+        4: " drastically ",
+        5: " drastically ",
+        6: " drastically "
+    };
+    if (params.boost > 0) {
+        this.print(this.nick(params.spot) + "'s " + StatInfo.name(params.stat) + boostVerbs[params.boost] + "rose!");
     } else if (params.boost < 0) {
-        this.print(this.nick(params.spot) +"'s " + StatInfo.name(params.stat) + (-params.boost > 1 ? (-params.boost > 2 ? " drastically " : " sharply ") : "") + " fell!");
+        this.print(this.nick(params.spot) + "'s " + StatInfo.name(params.stat) + boostVerbs[-params.boost] + "fell!");
     }
-    //this.damageCause = {};
+    // this.damageCause = {};
 };
 
 battledata.dealWithDynamicinfo = function(params) {
@@ -292,7 +301,7 @@ battledata.dealWithStatus = function(params) {
     this.print("<span class='battle-message-" + (status == "tox" ? "psn" : status) + "'>" + message + "</span>");
 
     this.trigger("statuschange", params.spot, params.status);
-    //this.damageCause = {};
+    // this.damageCause = {};
 };
 
 battledata.dealWithTeamstatus = function(params) {
@@ -308,7 +317,7 @@ battledata.dealWithAlreadystatus = function(params) {
 };
 
 battledata.dealWithFeelstatus = function(params) {
-    if (params.status == 6) { //confusion
+    if (params.status == 6) { // confusion
         this.print("<span class='battle-message-confusion'>" + this.nick(params.spot) + " is confused!</span>");
     } else {
         var status = BattleTab.statuses[params.status];
@@ -334,11 +343,11 @@ battledata.dealWithStatusdamage = function(params) {
             this.print("<span class='battle-message-psn'>" + this.nick(params.spot) + " was hurt by poison!</span>");
         }
     }
-    //this.damageCause.from = BattleTab.statuses[params.status];
+    // this.damageCause.from = BattleTab.statuses[params.status];
 };
 
 battledata.dealWithFreestatus = function(params) {
-    if (params.status == 6) { //confusion
+    if (params.status == 6) { // confusion
         this.print("<span class='battle-message-statusover'>" + this.nick(params.spot) + " snapped out its confusion.</span>");
     } else {
         var status = BattleTab.statuses[params.status];
@@ -361,7 +370,7 @@ battledata.dealWithClauseactivated = function(params) {
 };
 
 battledata.dealWithPlayerchat = function(params) {
-    this.print(params.message, {"player": params.spot});
+    this.print(params.message, { "player": params.spot });
 };
 
 battledata.dealWithSpectatorjoin = function(params) {
@@ -378,7 +387,7 @@ battledata.dealWithSpectatorleave = function(params) {
 };
 
 battledata.dealWithSpectatorchat = function(params) {
-    this.print(params.message, {"spectator": params.id});
+    this.print(params.message, { "spectator": params.id });
 };
 
 battledata.dealWithNotice = function(params) {
@@ -398,13 +407,13 @@ battledata.dealWithFlinch = function(params) {
 };
 
 battledata.dealWithRecoil = function(params) {
-    //this.damageCause.from = "recoil";
+    // this.damageCause.from = "recoil";
     this.print(this.nick(params.spot) + " is damaged by recoil!");
 };
 
 battledata.dealWithDrain = function(params) {
-    //this.damageCause.from = "drain";
-    //this.damageCause.of = this.spotToPlayer(params.spot);
+    // this.damageCause.from = "drain";
+    // this.damageCause.of = this.spotToPlayer(params.spot);
     this.print(this.nick(params.spot) + " had its energy drained!");
 };
 
@@ -429,9 +438,9 @@ battledata.dealWithWeatherstart = function(params) {
     ];
 
     if (params.permanent) {
-        this.print("<span class='battle-message-" + weather + "'>" + weatherAbilityMessage[params.weather-1].replace("%1", this.nick(params.spot)) + "</span>");
+        this.print("<span class='battle-message-" + weather + "'>" + weatherAbilityMessage[params.weather - 1].replace("%1", this.nick(params.spot)) + "</span>");
     } else {
-        this.print("<span class='battle-message-" + weather + "'>" + weatherRegularMessage[params.weather-1] + "</span>");
+        this.print("<span class='battle-message-" + weather + "'>" + weatherRegularMessage[params.weather - 1] + "</span>");
     }
 
     /* Hack to remove new weathers since it makes battle window crash */
@@ -458,7 +467,7 @@ battledata.dealWithFeelweather = function(params) {
         "A mysterious air current is protecting Flying-type Pokémon."
     ];
 
-    this.print("<span class='battle-message-" + weather + "'>" + messages[params.weather -1] + "</span>");
+    this.print("<span class='battle-message-" + weather + "'>" + messages[params.weather - 1] + "</span>");
 
     weather = params.weather;
     if (weather > 4) {
@@ -483,11 +492,11 @@ battledata.dealWithWeatherend = function(params) {
         "The mysterious air current has dissipated!"
     ];
 
-    this.print("<span class='battle-message-" + weather + "'>" + messages[params.weather -1] + "</span>");
+    this.print("<span class='battle-message-" + weather + "'>" + messages[params.weather - 1] + "</span>");
 };
 
 battledata.dealWithWeatherhurt = function(params) {
-    //this.damageCause.from = BattleTab.weathers[params.weather];
+    // this.damageCause.from = BattleTab.weathers[params.weather];
     var weather = BattleTab.weathers[params.weather];
 
     var messages = [
@@ -500,8 +509,8 @@ battledata.dealWithWeatherhurt = function(params) {
         undefined
     ];
 
-    if (messages[params.weather -1]) {
-        this.print("<span class='battle-message-" + weather + "'>" + messages[params.weather -1].replace("%1", this.nick(params.spot)) + "</span>");
+    if (messages[params.weather - 1]) {
+        this.print("<span class='battle-message-" + weather + "'>" + messages[params.weather - 1].replace("%1", this.nick(params.spot)) + "</span>");
     }
 };
 
@@ -511,13 +520,12 @@ battledata.dealWithSubstitute = function(params) {
     this.trigger("substitute", params.spot, params.substitute);
 };
 
-battledata.dealWithDamage = function(params)
-{
+battledata.dealWithDamage = function(params) {
     if (!this.isBattle(this.player(params.spot))) {
         this.print(this.nick(params.spot) + " lost " + params.damage + "% of its health!");
     } else {
         this.print(this.nick(params.spot) + " lost " + params.damage + " HP! (" +
-            Math.floor(params.damage*100/this.tpoke(params.spot).totalLife) + "% of its health)!");
+            Math.floor(params.damage * 100 / this.tpoke(params.spot).totalLife) + "% of its health)!");
     }
 };
 
@@ -549,8 +557,8 @@ battledata.dealWithRated = function(params) {
         if (clauses % 2) {
             this.print("<strong>Rule: </strong> " + BattleTab.clauses[i]);
         }
-        clauses = Math.floor(clauses/2);
-        i = i+1;
+        clauses = Math.floor(clauses / 2);
+        i = i + 1;
     }
 };
 
@@ -620,10 +628,11 @@ battledata.dealWithItemmessage = function(params) {
     if (mess.contains("%p")) mess = mess.replace("%p", PokeInfo.name(params.other));
 
     /* Balloon gets a really special treatment */
-    if (params.item == 35)
+    if (params.item == 35) {
         this.print("<strong>" + mess + "</strong>");
-    else
+    } else {
         this.print(mess);
+    }
 };
 
 battledata.dealWithMovemessage = function(params) {
@@ -633,7 +642,7 @@ battledata.dealWithMovemessage = function(params) {
     }
     if (mess.contains("%s")) mess = mess.replace("%s", this.nick(params.spot));
     if (mess.contains("%ts")) mess = mess.replace("%ts", this.name(params.spot));
-    if (mess.contains("%tf")) mess = mess.replace("%tf", this.name(1-params.spot));
+    if (mess.contains("%tf")) mess = mess.replace("%tf", this.name(1 - params.spot));
     if (mess.contains("%t")) mess = mess.replace("%t", TypeInfo.name(params.type));
     if (mess.contains("%f")) mess = mess.replace("%f", this.nick(params.foe));
     if (mess.contains("%m")) mess = mess.replace("%m", MoveInfo.name(params.other));

@@ -5,10 +5,10 @@ function PMHolder() {
     self.pms = {};
 }
 
-PMHolder.prototype.pm = function (pid, open) {
+PMHolder.prototype.pm = function(pid, open) {
     open = open || false;
     if (pid == webclient.ownId) {
-        return;
+        return undefined;
     }
 
     var pm;
@@ -18,7 +18,7 @@ PMHolder.prototype.pm = function (pid, open) {
     }
 
     if (webclient.players.isIgnored(pid)) {
-        return;
+        return undefined;
     }
 
     webclient.players.addFriend(pid);
@@ -29,7 +29,7 @@ PMHolder.prototype.pm = function (pid, open) {
     this.trigger("newpm", pid);
 
     if (open) {
-        webclientUI.switchToTab("pm-"+pid);
+        webclientUI.switchToTab("pm-" + pid);
     } else {
         pm.flashTab();
     }
@@ -37,24 +37,22 @@ PMHolder.prototype.pm = function (pid, open) {
     return pm;
 };
 
-PMHolder.prototype.observe = function (pm) {
+PMHolder.prototype.observe = function(pm) {
     var self = this;
 
-    pm.on("close", function () {
+    pm.on("close", function() {
         delete self.pms[pm.id];
     });
 };
 
 $(function() {
-    var self = webclient.pms;
-
-    webclient.players.on("login", function (id) {
-        if (id in self.pms) {
-            self.pm(id).reconnect();
+    webclient.players.on("login", function(id) {
+        if (id in webclient.pms.pms) {
+            webclient.pms.pm(id).reconnect();
         }
-    }).on("playerremove", function (id) {
-        if (id in self.pms) {
-            self.pm(id).disconnect();
+    }).on("playerremove", function(id) {
+        if (id in webclient.pms.pms) {
+            webclient.pms.pm(id).disconnect();
         }
     });
 });

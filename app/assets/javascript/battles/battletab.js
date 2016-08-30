@@ -15,7 +15,7 @@ function BattleTab(id) {
     this.opponent = this.battle.opponent;
 
     this.setCallbacks();
-    //new BattleAnimator(this);
+    // new BattleAnimator(this);
 
     this.battle.data.background = Math.floor(37 * Math.random());
 
@@ -25,20 +25,20 @@ function BattleTab(id) {
     var layout = $("<div>");
     layout.addClass("flex-row battle-tab-layout");
 
-    var rows = [0,0];
+    var rows = [0, 0];
     rows[this.opponent] = $("<div>").addClass("status-row").html("<span class='trainer-name'>" + utils.escapeHtml(this.players[this.opponent]) +
-        "</span><span class='stretchX'></span><span class='timer-text'>5:00</span>"+pokeballrowHtml);
-    rows[this.opponent].find('[data-toggle="tooltip"]').attr("data-placement", "top");
+        "</span><span class='stretchX'></span><span class='timer-text'>5:00</span>" + pokeballrowHtml);
+    rows[this.opponent].find("[data-toggle=\"tooltip\"]").attr("data-placement", "top");
     rows[this.myself] = $("<div>").addClass("status-row").html(pokeballrowHtml + "<span class='timer-text'>5:00</span><span class='stretchX'></span><span class='trainer-name'>" + utils.escapeHtml(this.players[this.myself]) + "</span>");
-    rows[this.myself].find('[data-toggle="tooltip"]').attr("data-placement", "bottom");
+    rows[this.myself].find("[data-toggle=\"tooltip\"]").attr("data-placement", "bottom");
     this.rows = rows;
     layout.append($("<div>").addClass("battle-view").append(rows[this.opponent]).append($("<div>").addClass("battle-canvas")
         .append(BattleTab.getIframe(id))
-        .append("<img src='/public/battle/background/" + this.battle.data.background  + ".png'>")).append(rows[this.myself]));
+        .append("<img src='/public/battle/background/" + this.battle.data.background + ".png'>")).append(rows[this.myself]));
     layout.append(this.chat.element);
     this.layout = layout;
     this.addTab(layout);
-    this.timers=[rows[0].find(".timer-text"), rows[1].find(".timer-text")];
+    this.timers = [rows[0].find(".timer-text"), rows[1].find(".timer-text")];
 
     this.teampokes = rows;
 
@@ -54,8 +54,8 @@ function BattleTab(id) {
                 if (!self.battle.choicesAvailable || $(this).attr("disabled")) {
                     return false;
                 }
-
                 self.onControlsChooseSwitch(+$(this).attr("slot"));
+                return undefined;
             });
 
             this.addPopover(item);
@@ -66,8 +66,8 @@ function BattleTab(id) {
             if (!self.battle.choicesAvailable || $(this).attr("disabled")) {
                 return false;
             }
-
             self.onControlsChooseMove(+$(this).attr("slot"));
+            return undefined;
         };
 
         var moveRow = $("<div>").addClass("battle-attackrow btn-group-justified").attr("data-toggle", "buttons");
@@ -82,23 +82,23 @@ function BattleTab(id) {
         }
         this.attackRow = moveRow;
 
-        var tabs = '\
-            <div class="btn-group" data-toggle="buttons">\
-                <a href="#moves-' + id + '" class="btn btn-default active battle-attack" data-toggle="tab">\
-                    <input type="radio">Attack</a>\
-                <a href="#switch-' + id + '" class="btn btn-default battle-switch" data-toggle="tab">\
-                    <input type="radio">Switch</a>\
-            </div>';
+        var tabs = "\
+            <div class=\"btn-group\" data-toggle=\"buttons\">\
+                <a href=\"#moves-" + id + "\" class=\"btn btn-default active battle-attack\" data-toggle=\"tab\">\
+                    <input type=\"radio\">Attack</a>\
+                <a href=\"#switch-" + id + "\" class=\"btn btn-default battle-switch\" data-toggle=\"tab\">\
+                    <input type=\"radio\">Switch</a>\
+            </div>";
 
-        var megacancel = '\
-            <div class="btn-group pull-right" data-toggle="buttons">\
-                <span class="btn btn-default battle-mega">\
-                    <input type="checkbox">Mega</span>\
-                <span class="btn btn-default battle-struggle" slot="-1" disabled>\
-                    <input type="checkbox">Struggle</span>\
-                <span class="btn btn-default battle-cancel">\
+        var megacancel = "\
+            <div class=\"btn-group pull-right\" data-toggle=\"buttons\">\
+                <span class=\"btn btn-default battle-mega\">\
+                    <input type=\"checkbox\">Mega</span>\
+                <span class=\"btn btn-default battle-struggle\" slot=\"-1\" disabled>\
+                    <input type=\"checkbox\">Struggle</span>\
+                <span class=\"btn btn-default battle-cancel\">\
                     Cancel</span>\
-            </div>';
+            </div>";
 
         moveRow.addClass("tab-pane active").attr("id", "moves-" + id);
         pokeRow.addClass("tab-pane").attr("id", "switch-" + id);
@@ -116,8 +116,11 @@ function BattleTab(id) {
             if ($(this).attr("disabled")) {
                 return false;
             }
-
-            self.choose({"type": "cancel", "slot": self.myself});
+            self.choose({
+                "type": "cancel",
+                "slot": self.myself
+            });
+            return undefined;
         });
     }
 
@@ -133,7 +136,10 @@ function BattleTab(id) {
 
     this.canvas = layout.find(".battle-canvas");
     this.tab.on("mousemove", function(event) {
-        var pos = {"top": event.pageY, "left": event.pageX};
+        var pos = {
+            "top": event.pageY,
+            "left": event.pageX
+        };
         var cpos = self.canvas.offset();
         cpos.width = self.canvas.width();
         cpos.height = self.canvas.height();
@@ -158,30 +164,35 @@ function BattleTab(id) {
 
     this.battle.allowStart();
 
-    //layout.find('[data-toggle="tooltip"]').tooltip();
-};
+    // layout.find('[data-toggle="tooltip"]').tooltip();
+}
 
 utils.inherits(BattleTab, BaseTab);
 
 BattleTab.getIframe = function(id) {
     if (webclientUI.battles.simpleWindow) {
         return "<iframe class='battle-iframe' src='/simple-battle-canvas.html?battle=" + id + "' seamless='seamless'></iframe>";
-    } else {
-        return "<iframe class='battle-iframe' src='/battle-canvas.html?battle=" + id + "' seamless='seamless'></iframe>";
     }
+    return "<iframe class='battle-iframe' src='/battle-canvas.html?battle=" + id + "' seamless='seamless'></iframe>";
 };
 
 BattleTab.prototype.setCallbacks = function() {
     var self = this;
-    this.battle.on("print", function(msg, args){self.print(msg, args)});
-    this.battle.on("playeradd", function(id) {self.newPlayer(id);});
-    this.battle.on("playerremove", function(id) {self.removePlayer(id);});
+    this.battle.on("print", function(msg, args) {
+        self.print(msg, args);
+    });
+    this.battle.on("playeradd", function(id) {
+        self.newPlayer(id);
+    });
+    this.battle.on("playerremove", function(id) {
+        self.removePlayer(id);
+    });
     this.battle.on("tier", function(tier) {
         self.trigger("changename", this.id, tier);
     });
     this.battle.on("timerupdated", function(i, time) {
         time = Math.floor(time);
-        self.timers[i].text(Math.floor(time/60) + ":" + ("0" + (time%60)).substr(-2));
+        self.timers[i].text(Math.floor(time / 60) + ":" + ("0" + (time % 60)).substr(-2));
         if (time <= 30) {
             self.timers[i].addClass("time-critical");
         } else {
@@ -207,14 +218,14 @@ BattleTab.prototype.setCallbacks = function() {
             self.pokes[0].popover("hide");
             self.pokes[1].popover("hide");
         } else {
-            self.pokes[1-spot].popover("hide");
+            self.pokes[1 - spot].popover("hide");
             self.pokes[spot].popover("show");
         }
         self.fieldPopover = spot;
     }).on("soundsettings", function(val) {
         webclientUI.setBattleSound(val);
     });
-}
+};
 
 BattleTab.prototype.switchToSimpleWindow = function() {
     this.battle.off("*");
@@ -233,8 +244,8 @@ BattleTab.prototype.addPopover = function(item, options) {
             var slot = $(this).attr("slot");
 
             var poke = self.battle.teams[self.myself][slot];
-            var html = "Item: " + ItemInfo.name(poke.item||0) + "<br>";
-            if (poke.ability) html += "Ability: " + AbilityInfo.name(poke.ability||0) + "<br>";
+            var html = "Item: " + ItemInfo.name(poke.item || 0) + "<br>";
+            if (poke.ability) html += "Ability: " + AbilityInfo.name(poke.ability || 0) + "<br>";
             html += "<br>Moves:<br>";
             for (var i in poke.moves) {
                 var move = poke.moves[i];
@@ -251,7 +262,7 @@ BattleTab.prototype.addPopover = function(item, options) {
             var slot = $(this).attr("slot");
 
             var poke = self.battle.teams[self.myself][slot];
-            return PokeInfo.name(poke) + " lv. " + (poke.level ||0);
+            return PokeInfo.name(poke) + " lv. " + (poke.level || 0);
         },
         "placement": "top",
         container: "body"
@@ -305,7 +316,7 @@ BattleTab.prototype.addFieldPopover = function(item, spot) {
 
             var table = "<table class='table table-condensed table-bordered'>";
             for (var i = 0; i < 6; i++) {
-                var stat = "<tr><td>"+StatInfo.name(i) + "</td><td>";
+                var stat = "<tr><td>" + StatInfo.name(i) + "</td><td>";
                 if (poke.stats) {
                     if (i == 0) {
                         stat += poke.totalLife;
@@ -315,8 +326,8 @@ BattleTab.prototype.addFieldPopover = function(item, spot) {
                 } else {
                     var boost = poke.boosts && i > 0 && poke.boosts[i] ? poke.boosts[i] : 0;
 
-                    var min = PokeInfo.minStat($.extend({}, poke, {"boost": boost}), i);
-                    var max = PokeInfo.maxStat($.extend({}, poke, {"boost": boost}), i);
+                    var min = PokeInfo.minStat($.extend({}, poke, { "boost": boost }), i);
+                    var max = PokeInfo.maxStat($.extend({}, poke, { "boost": boost }), i);
                     stat += (isNaN(min) ? "???" : min) + " - " + (isNaN(max) ? "???" : max);
                 }
                 stat += "</td><td>";
@@ -343,9 +354,9 @@ BattleTab.prototype.addFieldPopover = function(item, spot) {
 
             return ret.join("<br/>");
         },
-        placement: this.battle.player(spot) == this.myself ? "top": "bottom"
+        placement: this.battle.player(spot) == this.myself ? "top" : "bottom"
     });
-}
+};
 
 BattleTab.prototype.disableChoices = function() {
     this.switchRow.find(".battle-poke").attr("disabled", "disabled");
@@ -357,7 +368,7 @@ BattleTab.prototype.disableChoices = function() {
 
 BattleTab.prototype.myTeam = function() {
     return this.battle.teams[this.myself];
-}
+};
 
 BattleTab.prototype.enableChoices = function() {
     this.switchRow.find(".battle-poke").removeAttr("disabled").removeClass("active");
@@ -374,7 +385,7 @@ BattleTab.prototype.enableChoices = function() {
 
             this.switchButton.trigger("click");
         } else {
-            //below doesn't work, find out how to set tab
+            // below doesn't work, find out how to set tab
             this.attackButton.trigger("click");
             var allowed = false;
             for (var i in available.attacks) {
@@ -396,7 +407,7 @@ BattleTab.prototype.enableChoices = function() {
         } else {
             for (var i in this.myTeam()) {
                 if (this.myTeam()[i].life == 0 || this.myTeam()[i].status == 31) {
-                    this.switchRow.find(".battle-poke:eq("+i+")").attr("disabled", "disabled");
+                    this.switchRow.find(".battle-poke:eq(" + i + ")").attr("disabled", "disabled");
                 }
             }
         }
@@ -407,10 +418,13 @@ BattleTab.prototype.enableChoices = function() {
 
 BattleTab.prototype.showTeamPreview = function(team1, team2) {
     while (team2.length < 6) {
-        team2.push({"num":0, "level":0});
+        team2.push({
+            "num": 0,
+            "level": 0
+        });
     }
 
-    //Check if we've already changed the order, in which case, we restore it
+    // Check if we've already changed the order, in which case, we restore it
     if (this.teampreviewOrder) {
         var team = [];
         for (var i in this.battle.teams[this.myself]) {
@@ -423,18 +437,18 @@ BattleTab.prototype.showTeamPreview = function(team1, team2) {
 
     var selected = -1;
     var row = $("<div>").attr("data-toggle", "buttons").addClass("btn-group-justified team-preview-row");
-    for (var i  = 0; i < 6; i++) {
+    for (var i = 0; i < 6; i++) {
         var poke = $("<span>").addClass("btn btn-default btn-sm team-preview-poke").append("<input type='checkbox'>").append($("<img>").attr("src", PokeInfo.icon(team1[i]))).attr("slot", i);
         if (team1[i].item) {
             poke.append($("<img>").addClass("team-preview-poke-held-item").attr("src", PokeInfo.heldItemSprite()));
         }
-        if(team1[i].gender) {
+        if (team1[i].gender) {
             poke.append($("<img>").addClass("team-preview-poke-gender").attr("src", PokeInfo.genderSprite(team1[i].gender)));
         }
         poke.append("<br/>").append($("<smaller>").text("Lv. " + team1[i].level));
         row.append(poke);
 
-        this.addPopover(poke, {"placement": "bottom"});
+        this.addPopover(poke, { "placement": "bottom" });
     }
 
     row.on("click", "span.team-preview-poke", function(event) {
@@ -450,8 +464,8 @@ BattleTab.prototype.showTeamPreview = function(team1, team2) {
 
             var sel = row.find("span.team-preview-poke[slot=" + selected + "]");
 
-            cur.popover('hide');
-            //sel.popover('destroy');
+            cur.popover("hide");
+            // sel.popover('destroy');
 
             var s1 = cur.html();
             var s2 = sel.html();
@@ -463,24 +477,25 @@ BattleTab.prototype.showTeamPreview = function(team1, team2) {
             sel.html(s1);
             sel.attr("slot", clicked);
 
-            /*setTimeout(function() {
+            /* setTimeout(function() {
                 self.addPopover(sel, {"placement": "bottom"});
                 self.addPopover(cur, {"placement": "bottom"});
-            });*/
+            }); */
 
             selected = -1;
 
             return false;
         }
+        return undefined;
     });
 
     var row2 = $("<div>").addClass("btn-group-justified team-preview-row");
-    for (var i  = 0; i < 6; i++) {
+    for (var i = 0; i < 6; i++) {
         var poke = $("<span>").addClass("btn btn-default btn-sm team-preview-poke").attr("disabled", "disabled").append($("<img>").attr("src", PokeInfo.icon(team2[i])));
         if (team2[i].heldItem) {
             poke.append($("<img>").addClass("team-preview-poke-held-item").attr("src", PokeInfo.heldItemSprite()));
         }
-        if(team2[i].gender) {
+        if (team2[i].gender) {
             poke.append($("<img>").addClass("team-preview-poke-gender").attr("src", PokeInfo.genderSprite(team2[i].gender)));
         }
         poke.append("<br/>").append($("<smaller>").text("Lv. " + team2[i].level));
@@ -492,17 +507,17 @@ BattleTab.prototype.showTeamPreview = function(team1, team2) {
         message: $("<div>").append(row).append(row2),
         buttons: [
             {
-                label: 'Done',
-                action: function(dialogItself){
+                label: "Done",
+                action: function(dialogItself) {
                     dialogItself.close();
                 }
             }
         ],
         onhidden: function(dialogItself) {
-            //Send team preview
+            // Send team preview
             var order = [];
             for (var i = 0; i < 6; i++) {
-                order.push(row.find(".team-preview-poke:eq("+i+")").attr("slot"));
+                order.push(row.find(".team-preview-poke:eq(" + i + ")").attr("slot"));
             }
 
             self.onControlsChooseTeamPreview(order);
@@ -532,7 +547,7 @@ BattleTab.prototype.print = function(msg, args) {
             msg = pref + " " + utils.addChannelLinks(msg, webclient.channels.channelsByName(true));
         } else if ("player" in args) {
             msg = utils.escapeHtml(msg);
-            var pref = "<span class='player-message' style='color: " + (args.player == this.myself ? "darkcyan": "darkgoldenrod")+ "'>" + this.players[args.player] + ":</span>";
+            var pref = "<span class='player-message' style='color: " + (args.player == this.myself ? "darkcyan" : "darkgoldenrod") + "'>" + this.players[args.player] + ":</span>";
             msg = pref + " " + utils.addChannelLinks(msg, webclient.channels.channelsByName(true));
         } else if ("css" in args && args.css == "turn") {
             this.blankMessage = true;
@@ -540,7 +555,7 @@ BattleTab.prototype.print = function(msg, args) {
         }
     }
 
-    this.chat.insertMessage(msg, {linebreak: linebreak});
+    this.chat.insertMessage(msg, { linebreak: linebreak });
     this.activateTab();
 
 /*    if(!window.isActive && this.hadFocus && webclientUI.battleNotifications) {
@@ -562,21 +577,21 @@ BattleTab.prototype.onSetCurrent = function() {
 
 BattleTab.prototype.updateTeamPokes = function(player, pokes) {
     if (!pokes) {
-        pokes = [0,1,2,3,4,5];
+        pokes = [0, 1, 2, 3, 4, 5];
     }
     var $pokes = this.teampokes[player];
 
     for (var i = 0; i < pokes.length; i++) {
-        var $img = $pokes.find(".status:eq("+pokes[i]+")");
+        var $img = $pokes.find(".status:eq(" + pokes[i] + ")");
         var tpok = this.battle.teams[player][pokes[i]];
         if (tpok) {
             $img.removeClass();
             $img.html("");
-            $img.addClass("status status"+(tpok.status || 0));
+            $img.addClass("status status" + (tpok.status || 0));
             if (!tpok.num) {
-                $img.addClass("status-hidden")
+                $img.addClass("status-hidden");
             } else {
-                $img.append('<img src="' + PokeInfo.icon(tpok) + '">');
+                $img.append("<img src=\"" + PokeInfo.icon(tpok) + "\">");
             }
 
             var tooltip = "";
@@ -590,14 +605,14 @@ BattleTab.prototype.updateTeamPokes = function(player, pokes) {
                     tooltip += " - " + tpok.percent + "%";
                 }
             }
-            //tooltip+= JSON.stringify(tpok);
-            if (!tooltip)  tooltip="No Info";
+            // tooltip+= JSON.stringify(tpok);
+            if (!tooltip) tooltip = "No Info";
             $img.attr("title", tooltip).tooltip("fixTitle");
 
             if (this.isBattle() && player == this.myself) {
-                var $ct = this.switchRow.find(".battle-poke:eq("+pokes[i]+")");
+                var $ct = this.switchRow.find(".battle-poke:eq(" + pokes[i] + ")");
                 $ct.find("img").attr("src", PokeInfo.icon(tpok));
-                var text = (tpok.name||"") + "<br/>" + (tpok.life||0) + "/" + (tpok.totalLife||0);
+                var text = (tpok.name || "") + "<br/>" + (tpok.life || 0) + "/" + (tpok.totalLife || 0);
                 $ct.find(".battle-poke-text").html(text);
 
                 if (pokes[i] == 0) {
@@ -615,7 +630,7 @@ BattleTab.prototype.getMoveType = function(poke, i) {
         type = MoveInfo.getHiddenPowerType(poke.ivs, this.battle.conf.gen);
     }
     return type;
-}
+};
 
 BattleTab.prototype.updateMoveChoices = function() {
     var poke = this.battle.teams[this.myself][0];
@@ -623,7 +638,7 @@ BattleTab.prototype.updateMoveChoices = function() {
     for (var i in moves) {
         var move = moves[i];
         var movename = MoveInfo.name(move.tempmove || move.move);
-        var $move = this.attackRow.find(".battle-move:eq("+i+")");
+        var $move = this.attackRow.find(".battle-move:eq(" + i + ")");
         $move.find(".battle-move-text").text(movename);
         $move.find(".battle-move-pp").text(move.pp + "/" + (move.temppp || move.totalpp) + " PP");
         $move.removeClass($move.attr("typeclass") || "");
@@ -639,7 +654,11 @@ BattleTab.prototype.updateMoveChoices = function() {
  * @param $obj The button jquery object
  */
 BattleTab.prototype.onControlsChooseMove = function(slot) {
-    var choice = {"type":"attack", "slot":this.myself, "attackSlot": slot};
+    var choice = {
+        "type": "attack",
+        "slot": this.myself,
+        "attackSlot": slot
+    };
     if (this.megaButton.hasClass("active")) {
         choice.mega = true;
     }
@@ -651,7 +670,11 @@ BattleTab.prototype.onControlsChooseMove = function(slot) {
  * @param $obj The button jquery object
  */
 BattleTab.prototype.onControlsChooseSwitch = function(slot) {
-    var choice = {"type":"switch", "slot":this.myself, "pokeSlot": +slot};
+    var choice = {
+        "type": "switch",
+        "slot": this.myself,
+        "pokeSlot": +slot
+    };
     this.choose(choice);
 };
 
@@ -666,7 +689,11 @@ BattleTab.prototype.onControlsChooseTeamPreview = function(neworder) {
 
     this.updateTeamPokes(this.myself);
 
-    var choice = {"type":"rearrange", "slot":this.myself, "neworder": neworder};
+    var choice = {
+        "type": "rearrange",
+        "slot": this.myself,
+        "neworder": neworder
+    };
     this.choose(choice);
 };
 
@@ -682,11 +709,13 @@ BattleTab.prototype.getPlayers = function() {
     return array;
 };
 
-BattleTab.prototype.choose = function(choice)
-{
+BattleTab.prototype.choose = function(choice) {
     this.battle.choicesAvailable = false;
     this.disableChoices();
-    network.command('battlechoice', {id: this.id, choice: choice});
+    network.command("battlechoice", {
+        id: this.id,
+        choice: choice
+    });
 };
 
 BattleTab.prototype.isBattle = function() {
@@ -699,9 +728,9 @@ BattleTab.prototype.close = function() {
     clearInterval(this.timer);
 
     if (this.isBattle()) {
-        network.command('forfeit', {battle: this.id});
+        network.command("forfeit", { battle: this.id });
     } else {
-        network.command('stopwatching', {battle: this.id});
+        network.command("stopwatching", { battle: this.id });
     }
 
     this.trigger("close");
@@ -709,13 +738,13 @@ BattleTab.prototype.close = function() {
 };
 
 
-BattleTab.prototype.newPlayer = function (player) {
+BattleTab.prototype.newPlayer = function(player) {
     if (this.isCurrent()) {
         webclientUI.players.addPlayer(player);
     }
 };
 
-BattleTab.prototype.removePlayer = function (player) {
+BattleTab.prototype.removePlayer = function(player) {
     if (this.isCurrent()) {
         webclientUI.players.removePlayer(player);
     }
@@ -758,16 +787,16 @@ BattleTab.clauses = {
 };
 
 BattleTab.clauseDescs = {
-    0:"You can not put more than one Pokemon of the opposing team to sleep at the same time.",
-    1:"You can not freeze more than one Pokemon of the opposing team at the same time.",
-    2:"Nobody can watch your battle.",
-    3:"No more than one of the same items is allowed per team.",
-    4:"Random teams are given to trainers.",
-    5:"No time limit for playing.",
-    6:"One player cannot have more than one of the same pokemon per team.",
-    7:"At the beginning of the battle, you can see the opponent's team and rearrange yours accordingly.",
-    8:"The one who causes a tie (Recoil, Explosion, Destinybond, ...) loses the battle.",
-    9:"All Type Effectivenesses are inverted (Ex: Water is weak to Fire)"
+    0: "You can not put more than one Pokemon of the opposing team to sleep at the same time.",
+    1: "You can not freeze more than one Pokemon of the opposing team at the same time.",
+    2: "Nobody can watch your battle.",
+    3: "No more than one of the same items is allowed per team.",
+    4: "Random teams are given to trainers.",
+    5: "No time limit for playing.",
+    6: "One player cannot have more than one of the same pokemon per team.",
+    7: "At the beginning of the battle, you can see the opponent's team and rearrange yours accordingly.",
+    8: "The one who causes a tie (Recoil, Explosion, Destinybond, ...) loses the battle.",
+    9: "All Type Effectivenesses are inverted (Ex: Water is weak to Fire)"
 };
 
 BattleTab.clauseTexts = [
@@ -798,7 +827,7 @@ BattleTab.prototype.updatePokeData = function(spot) {
     $poke.find(".battle-stat-value").text(poke.percent + "%");
     var $prog = $poke.find(".battle-stat-progress");
     $prog.removeClass("battle-stat-progress-1x battle-stat-progress-2x battle-stat-progress-3x battle-stat-progress-4x");
-    $prog.addClass("battle-stat-progress-" + (Math.floor(poke.percent*4/100.1)+1) + "x");
+    $prog.addClass("battle-stat-progress-" + (Math.floor(poke.percent * 4 / 100.1) + 1) + "x");
     $prog.css("width", poke.percent + "%");
 
     if (this.isBattle() && this.player(spot) == this.myself) {
@@ -809,20 +838,19 @@ BattleTab.prototype.updatePokeData = function(spot) {
 };
 
 BattleTab.prototype.updateMove = function(num, move) {
-    var $move = this.$content.find("#move-"+num);
-    $move[0].className = '';
+    var $move = this.$content.find("#move-" + num);
+    $move[0].className = "";
     $move.addClass("click_button");
-    $move.addClass("type_"+MoveInfo.type(move.move));
+    $move.addClass("type_" + MoveInfo.type(move.move));
     $move.find(".battle-move-name").text(MoveInfo.name(move.move));
     $move.find(".battle_move_pp").text(move.pp + "/" + move.totalpp + " PP");
 };
 
 BattleTab.prototype.effects = function(spot, effect) {
     if (typeof effect == "object") {
-        return PokeInfo.spriteData(effect, {"back":spot==0});
-    } else {
-        return BattleTab.effects[effect] || BattleTab.effects.none;
+        return PokeInfo.spriteData(effect, { "back": spot == 0 });
     }
+    return BattleTab.effects[effect] || BattleTab.effects.none;
 };
 
 /* Basic position of the pokemon sprite */
@@ -830,10 +858,17 @@ BattleTab.prototype.pos = function(spot, effect) {
     var wh = this.effects(spot, effect);
 
     if (spot == 0) {
-        return {"bottom":"103" - wh.h/2,"left":"105" - wh.w / 2, "transform": "scale(1.5)"};
-    } else {
-        return {"top":"140" - wh.h/2,"right":"105" - wh.w / 2};
+        return {
+            "bottom": "103" - wh.h / 2,
+            "left": "105" - wh.w / 2,
+            "transform": "scale(1.5)"
+        };
     }
+
+    return {
+        "top": "140" - wh.h / 2,
+        "right": "105" - wh.w / 2
+    };
 };
 
 BattleTab.prototype.setPos = function(img, spot, effect) {

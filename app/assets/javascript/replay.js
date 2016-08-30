@@ -1,4 +1,4 @@
-function ReplayBattles () {
+function ReplayBattles() {
     var self = this;
     this.commandStack = [];
     this.time = 0;
@@ -18,8 +18,8 @@ function ReplayBattles () {
         this.time = 0;
         this.refTime = +(new Date());
 
-        this._battle = new BattleData({"conf": params});
-        this._battle.start({"conf": params});
+        this._battle = new BattleData({ "conf": params });
+        this._battle.start({ "conf": params });
         this.battleTab = new BattleTab(0);
         this.battleTab.setCurrentTab();
 
@@ -60,16 +60,16 @@ function ReplayBattles () {
         battleView.find(".replay-pause").on("click", function() {
             if (!self.paused) {
                 $(this).attr("aria-label", "Play");
-                $(this).html('<span class="glyphicon glyphicon-play">');
+                $(this).html("<span class=\"glyphicon glyphicon-play\">");
             } else {
                 $(this).attr("aria-label", "Pause");
-                $(this).html('<span class="glyphicon glyphicon-pause">');
+                $(this).html("<span class=\"glyphicon glyphicon-pause\">");
             }
             self.paused = !self.paused;
             $(this).blur();
         });
         battleView.find(".replay-next").on("click", function() {
-            self.forceNext = {"turn": self.turn + 1};
+            self.forceNext = { "turn": self.turn + 1 };
             $(this).blur();
         });
         battleView.find(".replay-skip").on("click", function() {
@@ -100,7 +100,10 @@ function ReplayBattles () {
     };
 
     this.dealWithCommand = function(time, params) {
-        this.commandStack.push({"time": time, "command": params});
+        this.commandStack.push({
+            "time": time,
+            "command": params
+        });
     };
 
     this.unloadCommand = function() {
@@ -163,14 +166,20 @@ var webclientUI = {
 var webclient = {
     players: {
         on: function() {},
-        hasPlayer: function() {return true;},
-        color: function() {return "black";}
+        hasPlayer: function() {
+            return true;
+        },
+        color: function() {
+            return "black";
+        }
     },
     battles: new ReplayBattles(),
     channels: {
-        channelsByName: function() {return [];}
+        channelsByName: function() {
+            return [];
+        }
     },
-    print: console.log.bind(console),
+    print: console.log.bind(console)
 };
 
 
@@ -182,8 +191,8 @@ $(function() {
 
     serverConnect({
         "onconnect": function() {
-            network.command("replay", {battle: battleToReplay});
-            setInterval(function(){
+            network.command("replay", { battle: battleToReplay });
+            setInterval(function() {
                 webclient.battles.unloadCommand();
             }, 20);
         },

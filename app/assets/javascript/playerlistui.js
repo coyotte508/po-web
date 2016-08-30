@@ -2,7 +2,7 @@
 function PlayerList() {
     this.ids = [];
     this.shown = {};
-    this.filter = '';
+    this.filter = "";
     this.authFilter = true;
     this.showColors = false;
 }
@@ -48,7 +48,7 @@ playerlist.getCompareFunction = function() {
     };
 };
 
-playerlist.setPlayers = function (playerIds) {
+playerlist.setPlayers = function(playerIds) {
     this.shown = {};
 
     var html = "";
@@ -77,12 +77,12 @@ playerlist.setPlayers = function (playerIds) {
     this.updatePlayerCount();
 };
 
-playerlist.updatePlayerCount = function () {
+playerlist.updatePlayerCount = function() {
     var idl = this.ids.length;
     this.count.text(idl + (idl !== 1 ? " Users" : " User"));
 };
 
-playerlist.createPlayerItem = function (id) {
+playerlist.createPlayerItem = function(id) {
     var name = webclient.players.name(id),
         ret;
 
@@ -110,10 +110,10 @@ playerlist.createPlayerItem = function (id) {
 
     var fullName = utils.escapeHtml(name);
     if (this.filter) {
-        fullName = fullName.replace(new RegExp("("+this.filter+")", "i"), "<b>$1</b>");
+        fullName = fullName.replace(new RegExp("(" + this.filter + ")", "i"), "<b>$1</b>");
     }
 
-    ret += "id='player-"+id+"' pid='" + id + "'>" + fullName + "</a>";
+    ret += "id='player-" + id + "' pid='" + id + "'>" + fullName + "</a>";
     return ret;
 };
 
@@ -123,14 +123,14 @@ playerlist.findPos = function(id) {
         auth = webclient.players.auth(id);
 
     var compareFunc = this.getCompareFunction();
-    return this.ids.dichotomy(function (pid) {
+    return this.ids.dichotomy(function(pid) {
         return compareFunc(
             lname, webclient.players.name(pid).toLowerCase(),
             auth, webclient.players.auth(pid));
     });
 };
 
-playerlist.addPlayer = function (id) {
+playerlist.addPlayer = function(id) {
     id = +id;
     /* Find the place where to put the name - dichotomy */
     var pos = this.findPos(id);
@@ -156,7 +156,7 @@ playerlist.addPlayer = function (id) {
     this.updatePlayerCount();
 };
 
-playerlist.removePlayer = function (id) {
+playerlist.removePlayer = function(id) {
     delete this.shown[id];
 
     var pos = this.ids.indexOf(+id);
@@ -169,7 +169,7 @@ playerlist.removePlayer = function (id) {
     this.updatePlayerCount();
 };
 
-playerlist.updatePlayer = function (id) {
+playerlist.updatePlayer = function(id) {
     if (this.ids.indexOf(+id) !== -1) {
         this.removePlayer(id);
         this.addPlayer(id);
@@ -183,8 +183,8 @@ $(function() {
     $("#player-filter").on("input", function() {
         s = $(this).val();
         webclientUI.players.setFilter(s);
-        
-        if (s.length > 0 && s[0] != '#') {
+
+        if (s.length > 0 && s[0] != "#") {
             $("#playerlist").scrollTop(0);
         }
     });
@@ -229,7 +229,7 @@ $(function() {
 
             menu.find("#player-ignore-menu").find("a").text(webclient.players.isIgnored(pid) ? "Unignore" : "Ignore");
             menu.find("#player-idle-menu").find("a").text(poStorage.get("player.idle", "boolean") ? "Unidle" : "Idle");
-            
+
             if (webclient.players.player(pid) != webclient.ownPlayer()) {
                 menu.find("#player-ignore-menu").show();
                 menu.find("#player-idle-menu").hide();
@@ -241,13 +241,13 @@ $(function() {
             var ownAuth = webclient.ownAuth();
 
             if (ownAuth > webclient.players.auth(pid)) {
-               menu.find(".divider").show();
-               menu.find("#player-kick-menu").show();
-               if (ownAuth >= 2) {
+                menu.find(".divider").show();
+                menu.find("#player-kick-menu").show();
+                if (ownAuth >= 2) {
                     menu.find("#player-ban-menu").show();
-               } else {
+                } else {
                     menu.find("#player-ban-menu").hide();
-               }
+                }
             } else {
                 menu.find(".divider").hide();
                 menu.find("#player-kick-menu").hide();
@@ -259,10 +259,12 @@ $(function() {
             } else {
                 menu.find("#player-watch-menu").hide();
             }
+
+            return undefined;
         },
         onItem: function(context, event) {
             event.preventDefault();
-            //var item = $(event.target);
+            // var item = $(event.target);
         }
     });
 });

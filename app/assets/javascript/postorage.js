@@ -21,7 +21,7 @@ function poStorage(name, type) {
     return poStorage.get(name, type);
 }
 
-poStorage.set = function (name, val) {
+poStorage.set = function(name, val) {
     var namespace = window.webclientStorageNamespace || "po.";
     if (Array.isArray(val) || (val && val.toString() === "[object Object]")) {
         val = JSON.stringify(val);
@@ -30,7 +30,7 @@ poStorage.set = function (name, val) {
     localStorage.setItem(namespace + name, val);
 };
 
-poStorage.get = function (name, type) {
+poStorage.get = function(name, type) {
     type = type || "string";
 
     var namespace = window.webclientStorageNamespace || "po.";
@@ -39,14 +39,10 @@ poStorage.get = function (name, type) {
         return value; // undefined
     }
 
-    if (type === "string") {
-        return value;
-    } else {
-        return JSON.parse(value);
-    }
+    return type === "string" ? value : JSON.parse(value);
 };
 
-poStorage.init = function (name, val) {
+poStorage.init = function(name, val) {
     var namespace = window.webclientStorageNamespace || "po.",
         value = localStorage.getItem(namespace + name);
 
@@ -58,20 +54,20 @@ poStorage.init = function (name, val) {
     return false;
 };
 
-poStorage.remove = function (name) {
+poStorage.remove = function(name) {
     var namespace = window.webclientStorageNamespace || "po.";
     localStorage.removeItem(namespace + name);
 };
 
-poStorage.clear = function () {
+poStorage.clear = function() {
     localStorage.clear();
 };
 
-poStorage.length = function () {
+poStorage.length = function() {
     return localStorage.length;
 };
 
-poStorage.keys = function () {
+poStorage.keys = function() {
     var namespace = window.webclientStorageNamespace || "po.";
     var keys = Object.keys(localStorage);
     var list = [];
@@ -83,8 +79,8 @@ poStorage.keys = function () {
     return list;
 };
 
-poStorage.toString = function () {
-    return "poStorage [" + poStorage.keys().map(function (k) {
+poStorage.toString = function() {
+    return "poStorage [" + poStorage.keys().map(function(k) {
         return "'" + k + "'";
     }).join(", ") + "]";
 };

@@ -47,8 +47,9 @@ pmtab.printMessage = function(id, msg) {
     if (!raw) {
         auth = webclient.players.auth(id);
         msg = utils.escapeHtml(msg);
-        msg = "<a href='po:info/" + id + "'><span class='player-message' style='color: " + webclient.players.color(id) + "'>" + utils.rank(auth) + utils.rankStyle(webclient.players.name(id) + ":", auth) + "</span></a>"
-            + " " + utils.addChannelLinks(msg, webclient.channels.channelsByName(true));
+        msg = "<a href='po:info/" + id + "'><span class='player-message' style='color: " + webclient.players.color(id) + "'>" +
+            utils.rank(auth) + utils.rankStyle(webclient.players.name(id) + ":", auth) +
+            "</span></a> " + utils.addChannelLinks(msg, webclient.channels.channelsByName(true));
 
         this.activateTab();
     }
@@ -61,8 +62,10 @@ pmtab.printMessage = function(id, msg) {
 
     if (id == this.id && !window.isActive) {
         if ("Notification" in window) {
-            var notification = new window.Notification(this.name() + " says: ", {body: orMsg});
-            setTimeout(function() {notification.close();}, 4000);
+            var notification = new window.Notification(this.name() + " says: ", { body: orMsg });
+            setTimeout(function() {
+                notification.close();
+            }, 4000);
         }
     }
 };
@@ -96,11 +99,11 @@ pmtab.disconnect = function() {
 $(function() {
     if ("Notification" in window) {
         window.Notification.requestPermission(function(result) {
-          if (result === 'denied') {
-            return;
-          } else if (result === 'default') {
-            return;
-          }
+            if (result === "denied") {
+                return;
+            } else if (result === "default") {
+                return;
+            }
           // Do something with the granted permission.
         });
     }

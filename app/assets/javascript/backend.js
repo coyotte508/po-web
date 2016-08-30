@@ -1,6 +1,6 @@
 var webclient = {
-    players : new PlayerHolder(),
-    channels : new ChannelHolder(),
+    players: new PlayerHolder(),
+    channels: new ChannelHolder(),
     pms: new PMHolder(),
     battles: new Battles(),
     ownTiers: [],
@@ -22,7 +22,7 @@ var webclient = {
     },
 
     requestInfo: function(id) {
-        network.command("player", {"id": id});
+        network.command("player", { "id": id });
     },
 
     onConnected: function() {
@@ -66,10 +66,10 @@ var webclient = {
                 message: "Enter your username:",
                 input: "<input name='username' type='text' placeholder='Username'>",
                 buttons: [
-                    $.extend({}, vex.dialog.buttons.YES, {text: "Login"}),
-                    $.extend({}, vex.dialog.buttons.NO, {text: "Login as Guest"})
+                    $.extend({}, vex.dialog.buttons.YES, { text: "Login" }),
+                    $.extend({}, vex.dialog.buttons.NO, { text: "Login as Guest" })
                 ],
-                callback: function (res) {
+                callback: function(res) {
                     if (res && res.username) {
                         loginInfo.name = res.username;
                         poStorage.set("user", res.username);
@@ -83,13 +83,16 @@ var webclient = {
     },
 
     challenge: function(id, params) {
-        //network.send("challengeplayer", {"id": id, "team": 0, "clauses": clauses, "tier": tier });
-        network.send("challengeplayer", $.extend({"id": id}, params));
+        // network.send("challengeplayer", {"id": id, "team": 0, "clauses": clauses, "tier": tier });
+        network.send("challengeplayer", $.extend({ "id": id }, params));
     },
 
     cancelFindBattle: function() {
         webclient.searchingForBattle = false;
-        network.send("challengeplayer", {"id": 0, "desc": "cancelled"});
+        network.send("challengeplayer", {
+            "id": 0,
+            "desc": "cancelled"
+        });
     },
 
     dealWithChallenge: function(params) {
@@ -127,11 +130,11 @@ var webclient = {
     },
 
     declineChallenge: function(params, reason) {
-        network.send("challengeplayer", $.extend({}, params, {"desc": reason || "refused"}));
+        network.send("challengeplayer", $.extend({}, params, { "desc": reason || "refused" }));
     },
 
     acceptChallenge: function(params) {
-        network.send("challengeplayer", $.extend({}, params, {"desc": "accepted"}));
+        network.send("challengeplayer", $.extend({}, params, { "desc": "accepted" }));
     },
 
     onChat: function(params) {
@@ -148,7 +151,7 @@ var webclient = {
         console.log(msg);
     },
 
-    sendMessage: function (message, id) {
+    sendMessage: function(message, id) {
         network.command("chat", {
             channel: id,
             message: message
@@ -173,7 +176,7 @@ var webclient = {
     },
 
     cacheTeam: function() {
-        var newTeam = JSON.stringify($.extend({}, this.getTeamData(), {"tier":""}));
+        var newTeam = JSON.stringify($.extend({}, this.getTeamData(), { "tier": "" }));
         var oldCache = this.cachedTeam;
         this.cachedTeam = newTeam;
 
@@ -182,9 +185,9 @@ var webclient = {
 
     sendTeam: function() {
         if (!webclient.team.tier || webclient.cacheTeam()) {
-            network.command("teamchange", {"teams": [webclient.getTeamData()]});
+            network.command("teamchange", { "teams": [webclient.getTeamData()] });
         } else {
-            network.command("changetier", {"0": webclient.team.tier});
+            network.command("changetier", { "0": webclient.team.tier });
         }
     },
 
@@ -202,21 +205,24 @@ var webclient = {
         }
     },
 
-    sendPM: function (message, id) {
+    sendPM: function(message, id) {
         var lines = message.trim().split("\n");
 
         for (var i = 0, len = lines.length; i < len; i++) {
             this.pms.pm(id).printMessage(webclient.ownId, lines[i]);
-            network.command("pm", {to: id, message: lines[i]});
+            network.command("pm", {
+                to: id,
+                message: lines[i]
+            });
         }
     },
 
     joinChannel: function(id) {
-        network.command("joinchannel", {channel: id});
+        network.command("joinchannel", { channel: id });
     },
 
     leaveChannel: function(id) {
-        network.command("leavechannel", {channel: id});
+        network.command("leavechannel", { channel: id });
     }
 };
 
@@ -230,7 +236,7 @@ $(function() {
     if (userGiven) {
         poStorage.set("user", userGiven);
     }
-    if (relayGiven){
+    if (relayGiven) {
         poStorage.set("relay", relayGiven);
     }
     if (portGiven) {

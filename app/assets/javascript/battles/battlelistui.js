@@ -4,7 +4,7 @@ function BattleList() {
 
 var battlelist = BattleList.prototype;
 
-battlelist.createBattleItem = function (id) {
+battlelist.createBattleItem = function(id) {
     var battle = webclient.battles.battle(id);
     var name = battle.tier || "";
 
@@ -17,7 +17,7 @@ battlelist.createBattleItem = function (id) {
 
 battlelist.changeName = function(id, name) {
     if (this.hasBattle(id)) {
-        $('#battle-' + id + ">.battle-name").text(utils.escapeHtml(name));
+        $("#battle-" + id + ">.battle-name").text(utils.escapeHtml(name));
     }
 };
 
@@ -30,7 +30,7 @@ battlelist.setSound = function(val) {
     for (var id in this.ids) {
         this.ids[id].battle.changeSound(val);
     }
-}
+};
 
 battlelist.addBattle = function(id) {
     var self = this;
@@ -47,7 +47,7 @@ battlelist.addBattle = function(id) {
         }
 
         if (window.isActive) {
-            webclientUI.switchToTab("battle-"+id);
+            webclientUI.switchToTab("battle-" + id);
         } else {
             /* DO not open it at first in order to increase badge count */
             battle.flashTab();

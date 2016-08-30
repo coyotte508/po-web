@@ -4,7 +4,7 @@ function ChannelList() {
     this.channotifs = {};
 }
 
-ChannelList.prototype.createChannelItem = function (id) {
+ChannelList.prototype.createChannelItem = function(id) {
     var name = webclient.channels.name(id);
     return "<a class='list-group-item channel-list-item' href='po:tab/channel-" + id + "' " +
         "id='channel-" + id + "'><span class='channel-name'>#" + utils.escapeHtml(name) +
@@ -18,7 +18,7 @@ ChannelList.prototype.countActive = function() {
     for (var id in this.ids) {
         if (webclient.channels.name(id).toLowerCase() in this.channotifs) {
             if ($("#channel-" + id).hasClass("tab-active")) {
-                cnt ++;
+                cnt++;
             }
         }
     }
@@ -28,7 +28,7 @@ ChannelList.prototype.countActive = function() {
 
 ChannelList.prototype.updateChannelName = function(id) {
     if (this.hasChannel(id)) {
-        $('#channel-' + id + ">.channel-name").text('#' + utils.escapeHtml(webclient.channels.name(id)));
+        $("#channel-" + id + ">.channel-name").text("#" + utils.escapeHtml(webclient.channels.name(id)));
     }
 };
 
@@ -59,7 +59,7 @@ ChannelList.prototype.channels = function() {
     return this.ids;
 };
 
-ChannelList.prototype.toggleChanEvents = function (id) {
+ChannelList.prototype.toggleChanEvents = function(id) {
     var chan = webclient.channels.name(id).toLowerCase();
     if (chan in this.chanevents) {
         delete this.chanevents[chan];
@@ -70,7 +70,7 @@ ChannelList.prototype.toggleChanEvents = function (id) {
     poStorage.set("chanevents-" + webclient.serverIP, this.chanevents);
 };
 
-ChannelList.prototype.toggleChanNotifs = function (id) {
+ChannelList.prototype.toggleChanNotifs = function(id) {
     var chan = webclient.channels.name(id).toLowerCase();
     if (chan in this.channotifs) {
         delete this.channotifs[chan];
@@ -81,11 +81,11 @@ ChannelList.prototype.toggleChanNotifs = function (id) {
     poStorage.set("channotifs-" + webclient.serverIP, this.channotifs);
 };
 
-ChannelList.prototype.chanEventsEnabled = function (id) {
+ChannelList.prototype.chanEventsEnabled = function(id) {
     return webclient.channels.name(id).toLowerCase() in this.chanevents;
 };
 
-ChannelList.prototype.chanNotifsEnabled = function (id) {
+ChannelList.prototype.chanNotifsEnabled = function(id) {
     return webclient.channels.name(id).toLowerCase() in this.channotifs;
 };
 
@@ -139,17 +139,19 @@ $(function() {
     webclientUI.channels.startObserving(webclient.channels);
     webclientUI.channels.element = $("#channellist");
 
-    $("#player-filter").typeahead({
-         hint: true,
-         highlight: false,
-         minLength: 1
-    },
-    {
-        name: "channels",
-        display: "value",
-        limit: 200,
-        source: webclientUI.channels.findMatches.bind(webclientUI.channels)
-    }).on("typeahead:select", function(event, sugg) {
+    $("#player-filter").typeahead(
+        {
+            hint: true,
+            highlight: false,
+            minLength: 1
+        },
+        {
+            name: "channels",
+            display: "value",
+            limit: 200,
+            source: webclientUI.channels.findMatches.bind(webclientUI.channels)
+        }
+    ).on("typeahead:select", function(event, sugg) {
         webclient.joinChannel(sugg.id);
     });
 
@@ -183,7 +185,7 @@ $(function() {
         },
         onItem: function(context, event) {
             event.preventDefault();
-            //var item = $(event.target);
+            // var item = $(event.target);
         }
     });
 });
