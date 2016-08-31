@@ -1,0 +1,14 @@
+{
+    "parserOptions": {
+        "ecmaVersion": 5
+    },
+    "env": {
+        "es6": false,
+        "node": false,
+        "jquery": true,
+        "browser": true
+    },
+    "rules": {
+        "no-var": "off"
+    }
+}
