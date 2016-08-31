@@ -235,9 +235,7 @@ module.exports = function(grunt) {
         },
         eslint: {
             scripts: [
-                "Gruntfile.js",
-                "server.js",
-                "serverconfig.js"
+                "*.js"
             ],
             app: [
                 "app/assets/javascript/**/*.js",
