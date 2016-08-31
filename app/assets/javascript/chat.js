@@ -1,11 +1,11 @@
 var chatHtml =
-'    <div class="chat">\
+"    <div class=\"chat\">\
      \
     </div>\
 \
-    <div class="chatInputContainer">\
-      <input type="text" class="form-control chatInput" placeholder="Type your message..." history>\
-    </div>';
+    <div class=\"chatInputContainer\">\
+      <input type=\"text\" class=\"form-control chatInput\" placeholder=\"Type your message...\" history>\
+    </div>";
 
 // At least Chrome (I assume other browsers do the same) expand <timestamp/> to <timestamp><timestamp/> (as it is an unknown element).
 var timestampRegex = /<timestamp *\/ *>|<timestamp><\/timestamp>/gi;
@@ -22,11 +22,11 @@ function Chat() {
     this.chatCount = 0;
 
     var self = this;
-    this.chatSend.keydown(utils.onEnterPressed(function () {
+    this.chatSend.keydown(utils.onEnterPressed(function() {
         if ($(this).val().length > 0) {
             self.trigger("chat", $(this).val());
         }
-        //$(this).val('');
+        // $(this).val('');
     }));
 }
 
@@ -34,7 +34,7 @@ Chat.prototype.disable = function() {
     this.chatSend.prop("disabled", true);
 };
 
-Chat.prototype.insertMessage = function (msg, opts) {
+Chat.prototype.insertMessage = function(msg, opts) {
     var chatTextArea = this.chatTextArea;
     var cta = chatTextArea[0];
     var scrollDown = cta.scrollTop >= cta.scrollHeight - cta.offsetHeight;
@@ -68,13 +68,13 @@ Chat.prototype.insertMessage = function (msg, opts) {
 };
 
 Chat.prototype.scrollDown = function() {
-    //this.chatTextArea.finish().animate({scrollTop: this.chatTextArea[0].scrollHeight}, "fast");
+    // this.chatTextArea.finish().animate({scrollTop: this.chatTextArea[0].scrollHeight}, "fast");
     this.chatTextArea.scrollTop(this.chatTextArea[0].scrollHeight);
 };
 
-$(function () {
+$(function() {
     var maxHistSize = 100;
-    $(document).on("keydown", "[history]", function (event) {
+    $(document).on("keydown", "[history]", function(event) {
         var elem = event.currentTarget;
 
         elem.hist = elem.hist || [];
@@ -89,15 +89,15 @@ $(function () {
             if (elem.histIndex > 0) {
                 var str = elem.hist[--elem.histIndex];
                 elem.value = str;
-                setTimeout(function(){
+                setTimeout(function() {
                     elem.setSelectionRange(str.length, str.length);
                 });
             }
         } else if (event.which === 40) { // Down
             if (elem.histIndex < elem.hist.length) {
-                var str = elem.hist[++elem.histIndex] || ""
+                var str = elem.hist[++elem.histIndex] || "";
                 elem.value = str;
-                setTimeout(function(){
+                setTimeout(function() {
                     elem.setSelectionRange(str.length, str.length);
                 });
             }

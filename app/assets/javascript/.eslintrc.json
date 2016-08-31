@@ -1,0 +1,21 @@
+{
+    "parserOptions": {
+        "ecmaVersion": 5
+    },
+    "env": {
+        "es6": false,
+        "node": false,
+        "jquery": true,
+        "browser": true
+    },
+    "rules": {
+        "no-var": "off",
+
+        "no-undef": "off",
+        "no-unused-vars": "off",
+        "block-scoped-var": "off",
+        "no-redeclare": "off",
+        "max-depth": "off",
+        "no-use-before-define": "off"
+    }
+}

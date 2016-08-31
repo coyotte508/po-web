@@ -4,20 +4,20 @@ function PMList() {
 
 var pmlist = PMList.prototype;
 
-pmlist.createPMItem = function (id) {
+pmlist.createPMItem = function(id) {
     var name = webclient.pms.pm(id).name(),
         ret;
 
     ret = "<a class='list-group-item pm-list-item' ";
-    ret += "href='po:tab/pm-" + id + "' "
-    ret += "id='pm-"+id+"'><span class='glyphicon glyphicon-envelope'></span>&nbsp;" + utils.escapeHtml(name) + '<button type="button" class="close" aria-label="Close" onclick="event.stopPropagation(); event.preventDefault(); webclientUI.pms.removePM(' + id + ');"><span aria-hidden="true">&times;</span></button></a>';
+    ret += "href='po:tab/pm-" + id + "' ";
+    ret += "id='pm-" + id + "'><span class='glyphicon glyphicon-envelope'></span>&nbsp;" + utils.escapeHtml(name) + "<button type=\"button\" class=\"close\" aria-label=\"Close\" onclick=\"event.stopPropagation(); event.preventDefault(); webclientUI.pms.removePM(" + id + ");\"><span aria-hidden=\"true\">&times;</span></button></a>";
     return ret;
 };
 
 
 pmlist.updatePMName = function(id) {
     if (this.hasPM(id)) {
-        $('#pm-'+id).text('#' + utils.escapeHtml(webclient.pms.pm(id).name()));
+        $("#pm-" + id).text("#" + utils.escapeHtml(webclient.pms.pm(id).name()));
     }
 };
 

@@ -27,7 +27,7 @@ ChannelData.prototype.newPlayer = function(id) {
 };
 
 ChannelData.prototype.removePlayer = function(id) {
-    if (! (id in this.players)) {
+    if (!(id in this.players)) {
         return;
     }
 
@@ -53,10 +53,10 @@ function ChannelHolder() {
     this.names = {}; // id -> name
     this.byName = {}; // name -> id
 
-    this.newChannel(0, 'Main Channel');
+    this.newChannel(0, "Main Channel");
 }
 
-ChannelHolder.prototype.channel = function (id) {
+ChannelHolder.prototype.channel = function(id) {
     if (id === -1 || !(id in this.channels)) {
         return null;
     }
@@ -67,7 +67,7 @@ ChannelHolder.prototype.name = function(id) {
     return this.names[id];
 };
 
-ChannelHolder.prototype.hasChannel = function (id) {
+ChannelHolder.prototype.hasChannel = function(id) {
     return id in this.channels;
 };
 
@@ -80,10 +80,10 @@ ChannelHolder.prototype.updateAutoJoin = function() {
         }
     }
 
-    poStorage.set("auto-join-"+ webclient.serverIP, names);
+    poStorage.set("auto-join-" + webclient.serverIP, names);
 };
 
-ChannelHolder.prototype.setNames = function (names) {
+ChannelHolder.prototype.setNames = function(names) {
     var i;
 
     this.names = names;
@@ -106,10 +106,10 @@ ChannelHolder.prototype.setNames = function (names) {
     }
 
     this.trigger("nameslist", Object.keys(names));
-    //webclient.ui.channellist.setChannels(Object.keys(names));
+    // webclient.ui.channellist.setChannels(Object.keys(names));
 };
 
-ChannelHolder.prototype.changeChannelName = function (id, name) {
+ChannelHolder.prototype.changeChannelName = function(id, name) {
     if (!(id in this.names)) {
         this.newChannel(id, name);
         return;
@@ -126,7 +126,7 @@ ChannelHolder.prototype.changeChannelName = function (id, name) {
     this.trigger("changename", id);
 };
 
-ChannelHolder.prototype.newChannel = function (id, name) {
+ChannelHolder.prototype.newChannel = function(id, name) {
     this.channels[id] = new ChannelData(id, name);
     this.names[id] = name;
     this.byName[name] = id;
@@ -134,7 +134,7 @@ ChannelHolder.prototype.newChannel = function (id, name) {
     this.channelCount += 1;
 
     this.trigger("newchannel", id);
-    //webclient.ui.channellist.addChannel(id);
+    // webclient.ui.channellist.addChannel(id);
 };
 
 ChannelHolder.prototype.removeChannel = function(id) {
@@ -148,14 +148,14 @@ ChannelHolder.prototype.removeChannel = function(id) {
     delete this.names[id];
 
     this.trigger("channeldestroyed", id);
-    //webclient.ui.channellist.removeChannel(id);
+    // webclient.ui.channellist.removeChannel(id);
 };
 
 ChannelHolder.prototype.joinChannel = function(id) {
     if (this.joinedChannels.indexOf(id) < 0) {
         this.joinedChannels.push(id);
         if (id !== 0) {
-             this.updateAutoJoin();
+            this.updateAutoJoin();
         }
         this.trigger("joinchannel", id);
     } else {

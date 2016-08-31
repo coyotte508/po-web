@@ -14,9 +14,12 @@ AbilityInfo = {};
 lastGen = null;
 
 $(function() {
-    var maxGen = {num: 0, subnum: 0};
+    var maxGen = {
+        num: 0,
+        subnum: 0
+    };
     for (var i in pokedex.gens.versions) {
-        var num = (+i) & ((1 << 16)-1);
+        var num = (+i) & ((1 << 16) - 1);
         var subnum = (+i) >> 16;
         if (num >= maxGen.num) {
             maxGen.num = num;
@@ -40,7 +43,10 @@ var getGen = function(gen, correct) {
     }
 
     if (typeof gen !== "object") {
-        gen = {"num": PokeInfo.species(gen), "subnum": PokeInfo.forme(gen)};
+        gen = {
+            "num": PokeInfo.species(gen),
+            "subnum": PokeInfo.forme(gen)
+        };
     }
 
     if (shouldCorrect) {
@@ -176,24 +182,22 @@ PokeInfo.find = function(id, what, gen) {
         return array[ornum];
     }
 
-    while (gennum < lastGen.num && ! (id in array) && !(ornum in array)) {
+    while (gennum < lastGen.num && !(id in array) && !(ornum in array)) {
         array = pokedex.pokes[what][++gennum];
     }
 
     if (!(id in array)) {
         id = ornum;
-    } else {
+    } else if (gennum != gen.num) {
         /* expand */
-        if (gennum != gen.num) {
-            pokedex.pokes[what][gen.num][id] = array[id];
-        }
+        pokedex.pokes[what][gen.num][id] = array[id];
     }
 
     return array[id];
 };
 
 PokeInfo.trainerSprite = function(num) {
-    return "http://pokemon-online.eu/images/trainers/" + (num||0) + ".png";
+    return "http://pokemon-online.eu/images/trainers/" + (num || 0) + ".png";
 };
 
 PokeInfo.heldItemSprite = function() {
@@ -205,8 +209,8 @@ PokeInfo.genderSprite = function(num) {
 };
 
 PokeInfo.substituteSprite = function(back) {
-    return "http://pokemon-online.eu/images/poke_img/sub" + (back ? "b":"") + ".png";
-}
+    return "http://pokemon-online.eu/images/poke_img/sub" + (back ? "b" : "") + ".png";
+};
 
 PokeInfo.sprite = function(poke, params) {
     params = params || {};
@@ -279,7 +283,12 @@ PokeInfo.spriteData = function(poke, params) {
 
     var ret = (back ? pokedex.pokes.images.back[num] : pokedex.pokes.images[num]);
     if (!ret) {
-        ret = (back ? pokedex.pokes.images.back[num%65356] : pokedex.pokes.images[num%65356]) || {"w":96,"h":96};
+        ret = back ? pokedex.pokes.images.back[num % 65356]
+            : pokedex.pokes.images[num % 65356];
+        ret = ret || {
+            "w": 96,
+            "h": 96
+        };
         ret.noforme = true;
     }
     return ret;
@@ -308,7 +317,7 @@ PokeInfo.gender = function(poke) {
 
 PokeInfo.height = function(poke) {
     var pokeNum = this.toNum(poke);
-    if (! (pokeNum in pokedex.pokes.height)) {
+    if (!(pokeNum in pokedex.pokes.height)) {
         pokeNum %= 65536;
     }
     return pokedex.pokes.height[pokeNum];
@@ -316,7 +325,7 @@ PokeInfo.height = function(poke) {
 
 PokeInfo.weight = function(poke) {
     var pokeNum = this.toNum(poke);
-    if (! (pokeNum in pokedex.pokes.weight)) {
+    if (!(pokeNum in pokedex.pokes.weight)) {
         pokeNum %= 65536;
     }
     return pokedex.pokes.weight[pokeNum];
@@ -441,19 +450,16 @@ PokeInfo.calculateStatInfo = function(info, stat, gen) {
     if (stat === 0) { // HP
         if (gen.num > 2) {
             return Math.floor((iv + 2 * baseStat + ev + 100) * level / 100) + 10;
-        } else {
-            return Math.max(1, Math.min(999,
-                Math.floor(((iv + baseStat) * 2 + ev) * level / 100) + level + 10));
         }
-    } else {
-        if (gen.num > 2) {
-            var natureBoost = info.natureBoost;
-            return Math.floor(Math.floor((iv + 2 * baseStat + ev) * level / 100 + 5) * natureBoost);
-        } else {
-            return Math.max(1, Math.min(999,
-                Math.floor(((iv + baseStat) * 2 + ev) * level / 100) + 5));
-        }
+        return Math.max(1, Math.min(999, Math.floor(
+            ((iv + baseStat) * 2 + ev) * level / 100) + level + 10));
     }
+    if (gen.num > 2) {
+        var natureBoost = info.natureBoost;
+        return Math.floor(Math.floor((iv + 2 * baseStat + ev) * level / 100 + 5) * natureBoost);
+    }
+    return Math.max(1, Math.min(999, Math.floor(
+        ((iv + baseStat) * 2 + ev) * level / 100) + 5));
 };
 
 PokeInfo.calculateStat = function(poke, stat, gen) {
@@ -510,11 +516,21 @@ PokeInfo.itemForForme = function(poke) {
 };
 
 GenderInfo.name = function(gender) {
-    return {1: "male", 2: "female", 3: "neutral"}[gender];
+    return {
+        1: "male",
+        2: "female",
+        3: "neutral",
+        0: "neutral"
+    }[gender];
 };
 
 GenderInfo.shorthand = function(gender) {
-    return {1: "(M)", 2: "(F)", 3: "", 0: ""}[gender];
+    return {
+        1: "(M)",
+        2: "(F)",
+        3: "",
+        0: ""
+    }[gender];
 };
 
 NatureInfo.list = function() {
@@ -535,32 +551,32 @@ NatureInfo.num = function(nature) {
     return pokedex.natures.nums[nature.toLowerCase()];
 };
 
-NatureInfo.getNatureEffect = function(nature_id, stat_id) {
+NatureInfo.getNatureEffect = function(natureId, statId) {
     var arr = [-1, 0, 1, 3, 4, 2];
-    var n1 = (Math.floor(nature_id / 5) === arr[stat_id]) ? 1 : 0;
-    var n2 = (nature_id % 5 === arr[stat_id]) ? 1 : 0;
+    var n1 = (Math.floor(natureId / 5) === arr[statId]) ? 1 : 0;
+    var n2 = (natureId % 5 === arr[statId]) ? 1 : 0;
     return (10 + n1 - n2) / 10;
 };
 
-NatureInfo.boostedStat = function(nature_id) {
+NatureInfo.boostedStat = function(natureId) {
     var arr = [1, 2, 5, 3, 4];
-    if (Math.floor(nature_id / 5) !== nature_id % 5) {
-        return arr[Math.floor(nature_id / 5)];
+    if (Math.floor(natureId / 5) !== natureId % 5) {
+        return arr[Math.floor(natureId / 5)];
     }
     return -1;
 };
 
-NatureInfo.reducedStat = function(nature_id) {
+NatureInfo.reducedStat = function(natureId) {
     var arr = [1, 2, 5, 3, 4];
-    if (Math.floor(nature_id / 5) !== nature_id % 5) {
-        return arr[nature_id % 5];
+    if (Math.floor(natureId / 5) !== natureId % 5) {
+        return arr[natureId % 5];
     }
     return -1;
 };
 
-NatureInfo.getNatureForBoosts = function(plus_boost, neg_boost) {
+NatureInfo.getNatureForBoosts = function(plusBoost, minusBoost) {
     for (var i = 0; i < 25; i++) {
-        if (NatureInfo.boostedStat(i) == plus_boost && NatureInfo.reducedStat(i) == neg_boost) {
+        if (NatureInfo.boostedStat(i) == plusBoost && NatureInfo.reducedStat(i) == minusBoost) {
             return i;
         }
     }
@@ -607,7 +623,7 @@ MoveInfo.findId = function(move) {
 MoveInfo.find = function(id, what, gen) {
     gen = getGen(gen);
 
-    if (! (what in pokedex.moves)) {
+    if (!(what in pokedex.moves)) {
         return "";
     }
 
@@ -618,7 +634,7 @@ MoveInfo.find = function(id, what, gen) {
         return array[id];
     }
 
-    while (gennum < lastGen.num && ! (id in array)) {
+    while (gennum < lastGen.num && !(id in array)) {
         array = pokedex.moves[what][++gennum];
     }
 
@@ -787,17 +803,15 @@ ItemInfo.list = function() {
 ItemInfo.hasItem = function(item) {
     if (item >= 8000) {
         return (item - 8000) in pokedex.items.berries;
-    } else {
-        return item in pokedex.items.items;
     }
+    return item in pokedex.items.items;
 };
 
 ItemInfo.name = function(item) {
     if (item >= 8000) {
         return pokedex.items.berries[item - 8000];
-    } else {
-        return pokedex.items.items[item];
     }
+    return pokedex.items.items[item];
 };
 
 ItemInfo.num = function(name) {
@@ -836,10 +850,9 @@ ItemInfo.releasedList = function(gen) {
 ItemInfo.released = function(item, gen) {
     gen = getGen(gen).num;
     if (item >= 8000) {
-        return pokedex.items.released_berries[gen].hasOwnProperty(item-8000);
-    } else {
-        return pokedex.items.released_items[gen].hasOwnProperty(item);
+        return pokedex.items.released_berries[gen].hasOwnProperty(item - 8000);
     }
+    return pokedex.items.released_items[gen].hasOwnProperty(item);
 };
 
 ItemInfo.usefulList = function() {
@@ -851,7 +864,7 @@ ItemInfo.useful = function(item) {
 };
 
 ItemInfo.message = function(item, part) {
-    var messages = (item >= 8000 ? pokedex.items.berry_messages[item-8000] : pokedex.items.item_messages[item]);
+    var messages = (item >= 8000 ? pokedex.items.berry_messages[item - 8000] : pokedex.items.item_messages[item]);
 
     if (!messages) {
         return "";
@@ -868,17 +881,15 @@ ItemInfo.message = function(item, part) {
 ItemInfo.desc = function(item) {
     if (item >= 8000) {
         return pokedex.items.berries_description[+item - 8000] || "";
-    } else {
-        return pokedex.items.items_description[item] || "";
     }
+    return pokedex.items.items_description[item] || "";
 };
 
 ItemInfo.itemSprite = function(item) {
     if (+item >= 8000) {
         return "http://pokemon-online.eu/images/berries/" + (item - 8000) + ".png";
-    } else {
-        return "http://pokemon-online.eu/images/items/" + item + ".png";
     }
+    return "http://pokemon-online.eu/images/items/" + item + ".png";
 };
 
 StatInfo.list = function() {

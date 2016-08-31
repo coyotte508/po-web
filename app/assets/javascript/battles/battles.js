@@ -16,13 +16,14 @@ Battles.prototype.battleOfPlayer = function(pid) {
             return this.battlesByPlayer[pid][x].id;
         }
     }
+    return undefined;
 };
 
 Battles.prototype.battlesOfPlayer = function(pid) {
     return this.battlesByPlayer[pid];
 };
 
-Battles.prototype.addBattle = function (battles) {
+Battles.prototype.addBattle = function(battles) {
     for (var id in battles) {
         var battle = battles[id];
         battle.id = id;
@@ -75,7 +76,7 @@ Battles.prototype.battleEnded = function(battleid, result) {
     }
 
     var ids = this.battleList[battleid].ids;
-    this.removeBattle(battleid,result);
+    this.removeBattle(battleid, result);
 
     /* We do nothing with result yet... no printing channel events?! */
     webclientUI.players.updatePlayer(ids[0]);
@@ -99,7 +100,7 @@ Battles.prototype.removePlayer = function(pid) {
     }
 };
 
-Battles.prototype.removeBattle = function(battleid,result) {
+Battles.prototype.removeBattle = function(battleid, result) {
     var ids = this.battleList[battleid].ids;
     delete this.battlesByPlayer[ids[0]][battleid];
     delete this.battlesByPlayer[ids[1]][battleid];
@@ -120,6 +121,7 @@ Battles.prototype.battle = function(pid) {
         return this.battles[pid];
     }
     console.log("no battle with id " + pid + " found, current ids: " + JSON.stringify(Object.keys(this.battles)));
+    return undefined;
 };
 
 Battles.prototype.watchBattle = function(bid, conf) {
@@ -128,7 +130,10 @@ Battles.prototype.watchBattle = function(bid, conf) {
         return;
     }
 
-    this.startBattle({id: bid, conf: conf});
+    this.startBattle({
+        id: bid,
+        conf: conf
+    });
 };
 
 Battles.prototype.startBattle = function(battle) {

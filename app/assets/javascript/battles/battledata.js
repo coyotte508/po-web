@@ -7,13 +7,13 @@ function BattleData(data) {
 var battledata = BattleData.prototype;
 
 /* Called when sound settings changed from the battle interface */
-battledata.setSound = function (playSound) {
+battledata.setSound = function(playSound) {
     this.sound = playSound;
     this.trigger("soundsettings", playSound);
 };
 
 /* Called when sound settings changed from up above */
-battledata.changeSound = function (playSound) {
+battledata.changeSound = function(playSound) {
     this.sound = playSound;
     this.trigger("soundchanged", playSound);
 };
@@ -50,17 +50,29 @@ battledata.start = function(data) {
     var conf = this.conf;
     var team = this.team;
 
-    this.queue = [];//Queues of message not yet processed
+    this.queue = []; // Queues of message not yet processed
 
     /* Pokemon on the field */
-    this.pokes = {"0": {}, "1": {}};
+    this.pokes = {
+        "0": {},
+        "1": {}
+    };
     /* teams */
-    this.teams = [[{},{},{},{},{},{}], [{},{},{},{},{},{}]];
+    this.teams = [
+        [{}, {}, {}, {}, {}, {}],
+        [{}, {}, {}, {}, {}, {}]
+    ];
     this.choices = {};
     this.spectators = {};
     this.timers = [
-        {"value":300, "ticking": false},
-        {"value":300, "ticking": false}
+        {
+            "value": 300,
+            "ticking": false
+        },
+        {
+            "value": 300,
+            "ticking": false
+        }
     ];
     this.players = ["", ""];
     /* player names */
@@ -92,9 +104,9 @@ battledata.start = function(data) {
             for (var j = 0; j < 4; j++) {
                 moves.push({
                     "move": 0,
-                    "pp":0,
-                    "totalpp":0,
-                    "tempmove":0,
+                    "pp": 0,
+                    "totalpp": 0,
+                    "tempmove": 0,
                     "temppp": 0
                 });
             }
@@ -109,7 +121,7 @@ battledata.start = function(data) {
     if (team) {
         this.myself = conf.players[1] === webclient.ownId ? 1 : 0;
         setTeam(this.myself, team);
-        //this.updateTeamPokes(this.myself);
+        // this.updateTeamPokes(this.myself);
     } else {
         if (this.conf.teams) {
             setTeam(0, this.conf.teams[0]);
@@ -124,9 +136,8 @@ battledata.start = function(data) {
 battledata.isBattle = function() {
     if (arguments.length === 0) {
         return !!this.team;
-    } else {
-        return (this.team && this.myself == arguments[0]) || "teams" in this.conf;
     }
+    return (this.team && this.myself == arguments[0]) || ("teams" in this.conf);
 };
 
 
@@ -144,9 +155,8 @@ battledata.rnick = function(spot) {
 battledata.nick = function(spot) {
     if (this.isBattle() && this.player(spot) == this.myself) {
         return this.rnick(spot);
-    } else {
-        return this.name(this.player(spot)) + "'s " + this.rnick(spot);
     }
+    return this.name(this.player(spot)) + "'s " + this.rnick(spot);
 };
 
 battledata.player = function(spot) {
@@ -218,9 +228,8 @@ battledata.poke = function(spot) {
 battledata.tpoke = function(spot) {
     if (arguments.length == 1) {
         return this.teams[this.player(spot)][this.slot(spot)];
-    } else {
-        return this.teams[arguments[0]][arguments[1]];
     }
+    return this.teams[arguments[0]][arguments[1]];
 };
 
 battledata.updateFieldPoke = function(spot) {
@@ -239,12 +248,12 @@ battledata.allowStart = function() {
 };
 
 battledata.pause = function() {
-    //console.log("pausing battle");
+    // console.log("pausing battle");
     this.paused = true;
 };
 
 battledata.unpause = function() {
-    //console.log("unpausing battle");
+    // console.log("unpausing battle");
     this.paused = false;
     this.readQueue();
 };
@@ -254,7 +263,7 @@ battledata.emptyQueue = function() {
 };
 
 battledata.readQueue = function() {
-    if (this.queue.length === 0 || this.readingQueue ||!this.canStart) {
+    if (this.queue.length === 0 || this.readingQueue || !this.canStart) {
         return;
     }
 
@@ -295,12 +304,12 @@ BattleData.immediateCommands = {
     "spectatorleave": true,
     "spectatorchat": true,
     "disconnect": true,
-    "reconnect" : true
+    "reconnect": true
 };
 
-battledata.sendMessage = function (message) {
+battledata.sendMessage = function(message) {
     var lines = message.trim().split("\n");
-    var command = (this.isBattle() ? "battlechat": "spectatingchat");
+    var command = (this.isBattle() ? "battlechat" : "spectatingchat");
 
     for (var i = 0; i < lines.length; i++) {
         network.command(command, {

@@ -4,7 +4,7 @@ function BaseTab(/* id */) {
 }
 
 BaseTab.prototype.isCurrent = function() {
-    //return this === webclient.channel;
+    // return this === webclient.channel;
     return this === webclient.currentTab;
 };
 
@@ -37,7 +37,7 @@ BaseTab.prototype.setCurrentTab = function() {
         return;
     }
 
-    //Make tab last so we keep the order of the tabs in memory when closing a tab
+    // Make tab last so we keep the order of the tabs in memory when closing a tab
     webclientUI.tabs.splice(webclientUI.tabs.indexOf(this), 1);
     webclientUI.tabs.push(this);
 
@@ -56,7 +56,7 @@ BaseTab.prototype.setCurrentTab = function() {
 
 BaseTab.prototype.addTab = function(element) {
     var tab = $("<div class='tab'></div>");
-    //tab.append(element);
+    // tab.append(element);
 
     tab.appendTo($("#tabs"));
     element.appendTo(tab);

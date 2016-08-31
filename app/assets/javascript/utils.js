@@ -1,9 +1,9 @@
 var utils = {
-    toAlphanumeric: function (text) {
+    toAlphanumeric: function(text) {
         return ("" + text).toLowerCase().replace(/[^a-z0-9]+/g, "");
     },
     // https://github.com/isaacs/inherits/blob/master/inherits_browser.js
-    inherits: function (ctor, superCtor) {
+    inherits: function(ctor, superCtor) {
         ctor.super_ = superCtor;
         ctor.prototype = Object.create(superCtor.prototype, {
             constructor: {
@@ -14,16 +14,16 @@ var utils = {
             }
         });
     },
-    queryField: function (key, defaultStr, query) {
+    queryField: function(key, defaultStr, query) {
         var match = new RegExp("[?&]" + key + "=([^&]*)")
             .exec(query || window.location.search);
         return (match && decodeURIComponent(match[1].replace(/\+/g, " "))) || defaultStr;
     },
     // HTML utilities
-    escapeHtmlQuotes: function (str) {
+    escapeHtmlQuotes: function(str) {
         return str.replace(/"/g, "&quot;").replace(/'/g, "&#39;");
     },
-    escapeHtml: function (str) {
+    escapeHtml: function(str) {
         return (str || "").replace(/&/g, "&amp;")
             .replace(/</g, "&lt;")
             .replace(/>/g, "&gt;")
@@ -31,23 +31,23 @@ var utils = {
             .replace(/&amp;(?=[^\s<]*<\/a>)/g, "&"); // Revert &amp;'s to &'s in URLs
     },
     // Unused
-    stripHtml: function (str) {
+    stripHtml: function(str) {
         return str.replace(/<\/?[^>]*>/g, "");
     },
     // Add an option for UTC dates too?
     // And AM/PM (date.getHours() < x)
-    addDatePadding: function (date) {
+    addDatePadding: function(date) {
         var str = date.toString();
         return date < 10 ? "0" + str : str;
     },
-    timestamp: function () {
+    timestamp: function() {
         var date = new Date();
         return utils.addDatePadding(date.getHours()) + ":" +
             utils.addDatePadding(date.getMinutes()) + ":" +
             utils.addDatePadding(date.getSeconds());
     },
     // channelNames must be a list of lowercase names
-    addChannelLinks: function (line, channelNames) {
+    addChannelLinks: function(line, channelNames) {
         var index = line.indexOf("#");
         if (index === -1) {
             return line;
@@ -84,7 +84,7 @@ var utils = {
 
         return str;
     },
-    unenumerable: function (obj, key, value) {
+    unenumerable: function(obj, key, value) {
         if (!obj.hasOwnProperty(key)) {
             // Enumerable, writable, configurable are false
             Object.defineProperty(obj, key, {
@@ -92,19 +92,19 @@ var utils = {
             });
         }
     },
-    rank: function (auth, set) {
+    rank: function(auth, set) {
         set = set || utils.rankSet;
         auth = Math.max(0, Math.min(4, auth));
         return set[auth] || "";
     },
-    rankStyle: function (str, auth, set) {
+    rankStyle: function(str, auth, set) {
         set = set || utils.rankStyleSet;
         auth = Math.max(0, Math.min(4, auth));
         return (set[auth] || "").replace(/\{name\}/gi, str);
     },
     // Shorthand for if (event.which === 13) { callback(); }
-    onEnterPressed: function (callback) {
-        return function (event) {
+    onEnterPressed: function(callback) {
+        return function(event) {
             if (event.which === 13) {
                 callback.call(this, event);
             }
@@ -116,12 +116,12 @@ var utils = {
 utils.rankSet = ["", "+", "+", "+", ""];
 utils.rankStyleSet = ["{name}", "<i>{name}</i>", "<i>{name}</i>", "<i>{name}</i>", "{name}"];
 
-utils.unenumerable(String.prototype, "contains", function (needle) {
+utils.unenumerable(String.prototype, "contains", function(needle) {
     return this.indexOf(needle) > -1;
 });
 
 /* Fast index search in a sorted array */
-utils.unenumerable(Array.prototype, "dichotomy", function (func) {
+utils.unenumerable(Array.prototype, "dichotomy", function(func) {
     if (this.length === 0) {
         return 0;
     }
@@ -129,7 +129,7 @@ utils.unenumerable(Array.prototype, "dichotomy", function (func) {
     var min = 0;
     var max = this.length - 1;
 
-    while (true) {
+    for (;;) {
         var half = Math.floor(min + (max - min) / 2);
 
         var cmp = func(this[half]);
@@ -162,9 +162,10 @@ $(window).blur(function() {
 });
 
 /* Add a preventDefault on stopPropagation in order to avoid
- on FF a click on a player element that won't be handled by our handler
- because of the e.stopPropagation() that would've happened. */
- $(function() {
+ * on FF a click on a player element that won't be handled by our handler
+ * because of the e.stopPropagation() that would've happened.
+ */
+$(function() {
     if (!$.fn.contextmenu.Constructor) {
         return;
     }
@@ -174,16 +175,16 @@ $(window).blur(function() {
         var x;
         if (e) {
             x = e.stopPropagation;
-            e.stopPropagation = function () {
+            e.stopPropagation = function() {
                 x.call(e);
                 e.preventDefault();
-            }
+            };
         }
-        
+
         ctxcm.call(this, e);
 
         if (e) {
             e.stopPropagation = x;
         }
     };
- });
+});

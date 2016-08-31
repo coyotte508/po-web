@@ -12,90 +12,90 @@ function createNetwork(WebSocket) {
 
     // TODO: Organize this
     var transformers = {
-        register: function () {
+        register: function() {
             return "register|";
         },
-        registry: function () {
+        registry: function() {
             return "registry";
         },
         // ?
-        teamchange: function (payload) {
+        teamchange: function(payload) {
             return "teamchange|" + JSON.stringify(payload);
         },
-        changetier: function (payload) {
+        changetier: function(payload) {
             return "changetier|" + JSON.stringify(payload);
         },
         // battle: number
-        watch: function (payload) {
+        watch: function(payload) {
             return "watch|" + payload.battle;
         },
         // battle: number
-        stopwatching: function (payload) {
+        stopwatching: function(payload) {
             return "stopwatching|" + payload.battle;
         },
         // sameTier: boolean, range: number
-        findbattle: function (payload) {
+        findbattle: function(payload) {
             return "findbattle|" + JSON.stringify(payload);
         },
         // ?
-        battlechoice: function (payload) {
+        battlechoice: function(payload) {
             return "battlechoice|" + payload.id + "|" + JSON.stringify(payload.choice);
         },
         // battle: number
-        forfeit: function (payload) {
+        forfeit: function(payload) {
             return "forfeit|" + payload.battle;
         },
         // id: number
-        player: function (payload) {
+        player: function(payload) {
             return "player|" + payload.id;
         },
         // ip: string
-        connect: function (payload) {
+        connect: function(payload) {
             return "connect|" + payload.ip;
         },
-        replay: function (payload) {
+        replay: function(payload) {
             return "replay|" + payload.battle;
         },
         // channel: string
-        joinchannel: function (payload) {
+        joinchannel: function(payload) {
             return "join|" + payload.channel;
         },
         // channel: number
-        leavechannel: function (payload) {
+        leavechannel: function(payload) {
             return "leave|" + payload.channel;
         },
         // message: string, channel: number
-        chat: function (payload) {
+        chat: function(payload) {
             return "chat|" + JSON.stringify(payload);
         },
         // to: number, message: string
-        pm: function (payload) {
+        pm: function(payload) {
             return "pm|" + JSON.stringify(payload);
         },
         // battle: number, message: string
-        battlechat: function (payload) {
+        battlechat: function(payload) {
             return "battlechat|" + payload.battle + "|" + payload.message;
         },
         // battle: number, message: string
-        spectatingchat: function (payload) {
+        spectatingchat: function(payload) {
             return "spectatingchat|" + payload.battle + "|" + payload.message;
         },
         // version: number, name: string, default: string, autojoin: string, ladder: boolean, idle: boolean, color: string
-        login: function (payload) {
+        login: function(payload) {
             return "login|" + JSON.stringify(payload);
         },
         // hash: string
-        auth: function (payload) {
+        auth: function(payload) {
             return "auth|" + payload.hash;
         },
         // id: number
-        getrankings: function (payload) {
+        getrankings: function(payload) {
             return "getrankings|" + payload.id;
         },
-        //id: number, tier: string, team: number (of own team slot), clauses: number
-        challengeplayer: function (payload) {
+        // id: number, tier: string, team: number (of own team slot), clauses: number
+        challengeplayer: function(payload) {
             /* Convert clauses as an array to a number */
-            var copy = $.extend({}, payload, {"clauses": 0});
+            var copy = $.extend({}, payload, { "clauses": 0 });
             var mult = 1;
             for (var i in payload.clauses) {
                 copy.clauses += mult * payload.clauses[i];
@@ -103,22 +103,22 @@ function createNetwork(WebSocket) {
             }
             return "challenge|" + JSON.stringify(copy);
         },
-        kick: function (payload) {
+        kick: function(payload) {
             return "kick|" + payload.id;
         },
-        ban: function (payload) {
+        ban: function(payload) {
             return "ban|" + payload.id;
         },
-        idle: function (payload) {
+        idle: function(payload) {
             return "idle|" + (payload.away ? 1 : 0);
         },
-        ladder: function (payload) {
+        ladder: function(payload) {
             return "ladder|" + (payload.ladder ? 1 : 0);
         }
     };
 
     var parsers = {
-        defaultserver: function (payload) {
+        defaultserver: function(payload) {
             /* If the server is on the same IP as the relay, we display the server IP but
                 send localhost */
             var server = payload.replace("localhost", this.relay),
@@ -132,7 +132,7 @@ function createNetwork(WebSocket) {
                 this.command("registry");
             }
         },
-        servers: function (payload) {
+        servers: function(payload) {
             var servers = JSON.parse(payload),
                 html = "",
                 server, len, i;
@@ -148,24 +148,24 @@ function createNetwork(WebSocket) {
                 sortList: [[1, 1]]
             });
         },
-        connected: function () {
+        connected: function() {
             webclient.onConnected();
         },
-        disconnected: function () {
+        disconnected: function() {
             webclientUI.printDisconnectionMessage();
             webclient.connectedToServer = false;
             // announcement.hide("slow");
         },
-        msg: function (payload) {
+        msg: function(payload) {
             webclient.print(payload);
         },
-        error: function (payload) {
+        error: function(payload) {
             webclient.print(payload);
         },
-        chat: function (payload) {
+        chat: function(payload) {
             webclient.onChat(JSON.parse(payload));
         },
-        playerkick: function (payload) {
+        playerkick: function(payload) {
             var params = JSON.parse(payload);
             if (params.source) {
                 webclientUI.printHtml("<span class='player-kick'>" + utils.escapeHtml(webclient.players.name(params.source)) + " kicked " +
@@ -175,7 +175,7 @@ function createNetwork(WebSocket) {
                     " was kicked by the server!</span>");
             }
         },
-        playerban: function (payload) {
+        playerban: function(payload) {
             var params = JSON.parse(payload);
             if (params.source) {
                 webclientUI.printHtml("<span class='player-ban'>" + utils.escapeHtml(webclient.players.name(params.source)) + " banned " +
@@ -185,33 +185,32 @@ function createNetwork(WebSocket) {
                     " was banned by the server" + (params.hasOwnProperty("time") ? " for " + params.time + " minute(s)" : "") + "!</span>");
             }
         },
-        challenge: function (payload) {
+        challenge: function(payload) {
             webclient.registered = true;
             $("#register-dd").addClass("disabled");
 
-            var net = this;
-
-            //var password = $("#password").val();
-            var password = '';
+            // var password = $("#password").val();
+            var password = "";
 
             var hash;
 
             if (password) {
                 hash = MD5(MD5(password) + payload);
-                net.send("auth", {hash: hash});
+                this.send("auth", { hash: hash });
             } else {
+                var self = this;
                 vex.dialog.open({
-                    message: "Please enter your password, <strong>" + poStorage.get("user") +"</strong> (<small><a href='" + window.location.pathname + "' target='_self' onclick='poStorage.remove(\"user\");'>Not you?</a></small>):",
+                    message: "Please enter your password, <strong>" + poStorage.get("user") + "</strong> (<small><a href='" + window.location.pathname + "' target='_self' onclick='poStorage.remove(\"user\");'>Not you?</a></small>):",
                     input: "<input name='password' type='password' placeholder='Password' required />",
-                    callback: function (res) {
+                    callback: function(res) {
                         if (res && res.password) {
                             // after clicking OK
                             // res.password is the value from the textbox
                             hash = MD5(MD5(res.password) + payload);
-                            net.send("auth", {hash: hash});
+                            self.send("auth", { hash: hash });
                         } else {
                             // after clicking Cancel
-                            net.close();
+                            self.close();
                         }
                     }
                 });
@@ -231,39 +230,39 @@ function createNetwork(WebSocket) {
 
             webclient.dealWithChallenge(params);
         },
-        announcement: function (payload) {
-            /*webclient.sandboxHtml(announcement, payload);
-            announcement.css("visibility", "visible");*/
+        announcement: function(payload) {
+            /* webclient.sandboxHtml(announcement, payload);
+            announcement.css("visibility", "visible"); */
         },
-        channels: function (payload) {
+        channels: function(payload) {
             webclient.channels.setNames(JSON.parse(payload));
         },
-        newchannel: function (payload) {
+        newchannel: function(payload) {
             var params = JSON.parse(payload);
             webclient.channels.newChannel(params.id, params.name);
         },
-        removechannel: function (payload) {
+        removechannel: function(payload) {
             webclient.channels.removeChannel(payload);
         },
-        channelnamechange: function (payload) {
+        channelnamechange: function(payload) {
             var params = JSON.parse(payload);
             webclient.channels.changeChannelName(params.id, params.name);
         },
-        players: function (payload) {
+        players: function(payload) {
             var params = JSON.parse(payload);
             webclient.players.addPlayer(params);
         },
-        playerlogout: function (payload) {
+        playerlogout: function(payload) {
             webclient.players.removePlayer(payload);
         },
-        join: function (payload) {
+        join: function(payload) {
             var parts = payload.split("|"),
                 chan = +parts[0],
                 player = +parts[1];
 
             webclient.channels.channel(chan).newPlayer(player);
         },
-        leave: function (payload) {
+        leave: function(payload) {
             var parts = payload.split("|"),
                 chan = +parts[0],
                 player = +parts[1];
@@ -271,47 +270,47 @@ function createNetwork(WebSocket) {
             webclient.channels.channel(chan).removePlayer(player);
             webclient.players.testPlayerOnline(player);
         },
-        channelplayers: function (payload) {
+        channelplayers: function(payload) {
             var params = JSON.parse(payload);
             webclient.channels.channel(params.channel).setPlayers(params.players);
             webclient.channels.joinChannel(params.channel);
         },
-        login: function (payload) {
+        login: function(payload) {
             webclient.connectedToServer = true;
 
             var params = JSON.parse(payload);
             webclient.ownTiers = params.tiers;
             webclient.players.login(params.id, params.info);
 
-            this.command("getrankings", {id: params.id});
+            this.command("getrankings", { id: params.id });
         },
-        unregistered: function (payload) {
+        unregistered: function(payload) {
             $("#register-dd").removeClass("disabled");
             webclient.registered = false;
         },
-        pm: function (payload) {
+        pm: function(payload) {
             var params = JSON.parse(payload),
                 src = params.src;
             if (!webclient.players.isIgnored(src)) {
                 webclient.pms.pm(src).printMessage(src, params.message);
             }
         },
-        watchbattle: function (payload) {
+        watchbattle: function(payload) {
             var id = payload.split("|")[0];
             var params = JSON.parse(payload.slice(id.length + 1));
             webclient.battles.watchBattle(+id, params);
         },
-        battlecommand: function (payload) {
+        battlecommand: function(payload) {
             var battleid = payload.split("|")[0];
             if (battleid in webclient.battles.battles) {
                 webclient.battles.dealWithCommand(battleid, JSON.parse(payload.slice(battleid.length + 1)));
             }
         },
-        replaycommand: function (payload) {
+        replaycommand: function(payload) {
             var time = payload.split("|")[0];
             webclient.battles.dealWithCommand(+time, JSON.parse(payload.slice(time.length + 1)));
         },
-        battlestarted: function (payload) {
+        battlestarted: function(payload) {
             var battleid = payload.split("|")[0],
                 battle = JSON.parse(payload.slice(battleid.length + 1)),
                 obj = {};
@@ -319,7 +318,7 @@ function createNetwork(WebSocket) {
             obj[battleid] = battle;
             webclient.battles.addBattle(obj);
         },
-        channelbattle: function (payload) {
+        channelbattle: function(payload) {
             var chanid = payload.split("|")[0],
                 params = JSON.parse(payload.slice(chanid.length + 1)),
                 obj = {};
@@ -327,7 +326,7 @@ function createNetwork(WebSocket) {
             obj[params.battleid] = params.battle;
             webclient.battles.addBattle(obj);
         },
-        channelbattlelist: function (payload) {
+        channelbattlelist: function(payload) {
             var chanid = payload.split("|")[0],
                 battle = JSON.parse(payload.slice(chanid.length + 1));
 
@@ -338,16 +337,16 @@ function createNetwork(WebSocket) {
             //     webclient.ui.playerList.setPlayers(webclient.channel.playerIds());
             // }
         },
-        battlefinished: function (payload) {
+        battlefinished: function(payload) {
             var battleid = payload.split("|")[0],
                 result = JSON.parse(payload.slice(battleid.length + 1));
 
             webclient.battles.battleEnded(battleid, result);
         },
-        stopwatching: function (payload) {
+        stopwatching: function(payload) {
             webclient.battles.serverStopWatching(+payload);
         },
-        rankings: function (payload) {
+        rankings: function(payload) {
             var parts = payload.split("|"),
                 id = parts[0],
                 rankings = JSON.parse(parts[1]), tier, rank,
@@ -366,23 +365,23 @@ function createNetwork(WebSocket) {
 
             $("#rankings").html(html);
         },
-        tiers: function (payload) {
+        tiers: function(payload) {
             webclient.tiersList = JSON.parse(payload);
         },
-        optionschange: function (payload) {
+        optionschange: function(payload) {
             webclient.players.optionsChange(JSON.parse(payload));
         },
-        teamtiers: function (payload) {
+        teamtiers: function(payload) {
             webclient.ownTiers = JSON.parse(payload);
         }
     };
 
-    //actual working commands:
+    // actual working commands:
     parsers = {
         connected: parsers.connected,
         disconnected: parsers.disconnected,
         msg: parsers.msg,
-        error : parsers.error,
+        error: parsers.error,
         chat: parsers.chat,
         playerkick: parsers.playerkick,
         playerban: parsers.playerban,
@@ -425,9 +424,9 @@ function createNetwork(WebSocket) {
         this._opened = false;
     }
 
-    Network.prototype.open = function (ip, onopen, onerror, onclose) {
+    Network.prototype.open = function(ip, onopen, onerror, onclose) {
         if (this._opened) {
-            return;
+            return undefined;
         }
 
         try {
@@ -452,12 +451,12 @@ function createNetwork(WebSocket) {
         return this;
     };
 
-    Network.prototype.command = Network.prototype.send = function (command, payload) {
+    Network.prototype.command = Network.prototype.send = function(command, payload) {
         this.sendRaw(transformers[command].call(this, payload));
         return this;
     };
 
-    Network.prototype.sendRaw = function (msg) {
+    Network.prototype.sendRaw = function(msg) {
         if (!this.isOpen()) {
             this.buffer.push(msg);
             return this;
@@ -465,13 +464,15 @@ function createNetwork(WebSocket) {
 
         try {
             this.socket.send(msg);
-        } catch (ex) {} // Ignore potential SYNTAX_ERRs
+        } catch (ex) {
+            // Ignore potential SYNTAX_ERRs
+        }
         return this;
     };
 
-    Network.prototype.close = function () {
+    Network.prototype.close = function() {
         if (!this.opened()) {
-            return;
+            return undefined;
         }
 
         this.socket.close(1000);
@@ -482,34 +483,34 @@ function createNetwork(WebSocket) {
     };
 
     // State
-    Network.prototype.opened = function () {
+    Network.prototype.opened = function() {
         var socket = this.socket;
         return socket && (socket.readyState === states.Connecting || socket.readyState === states.Open);
     };
 
-    Network.prototype.isOpen = function () {
+    Network.prototype.isOpen = function() {
         var socket = this.socket;
         return socket && (socket.readyState === states.Open);
     };
 
     // Events
-    Network.prototype.onopen = function (cb) {
-        var net = this;
+    Network.prototype.onopen = function(cb) {
+        var self = this;
 
-        return function () {
-            for (var i = 0, len = net.buffer.length; i < len; i++) {
-                net.sendRaw(net.buffer[i]);
+        return function() {
+            for (var i = 0, len = self.buffer.length; i < len; i++) {
+                self.sendRaw(self.buffer[i]);
             }
 
             if (typeof cb === "function") {
-                cb.call(net, net);
+                cb.call(self, self);
             }
         };
     };
 
-    Network.prototype.onmessage = function () {
-        var net = this;
-        return function (evt) {
+    Network.prototype.onmessage = function() {
+        var self = this;
+        return function(evt) {
             var data = evt.data,
                 pipe = data.indexOf("|"),
                 cmd, payload;
@@ -520,9 +521,9 @@ function createNetwork(WebSocket) {
                 cmd = data.substr(0, pipe);
                 payload = data.slice(pipe + 1);
                 if (parsers.hasOwnProperty(cmd)) {
-                    parsers[cmd].call(net, payload);
+                    parsers[cmd].call(self, payload);
                 } else {
-                    net.trigger(cmd, payload);
+                    self.trigger(cmd, payload);
                 }
             }
         };

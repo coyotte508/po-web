@@ -9,14 +9,14 @@ var webclientUI = {
     waitingInfos: {},
     battleNotifications: true,
 
-    printDisconnectionMessage : function(html) {
+    printDisconnectionMessage: function(html) {
         webclientUI.printHtml("<b>Disconnected from Server! If the disconnect is due to an internet problem, try to <a href='po:reconnect/'>reconnect</a> once the issue is solved. You can also go back to the <a href='" + config.registry + "'>server list</a>.</b>");
         webclientUI.switchToChannel();
     },
 
-    switchToChannel: function () {
+    switchToChannel: function() {
         if (webclient.currentTab.shortHand != "channel") {
-            for (var i = webclientUI.tabs.length-1; i  >= 0; i--) {
+            for (var i = webclientUI.tabs.length - 1; i >= 0; i--) {
                 if (webclientUI.tabs[i].shortHand == "channel") {
                     webclientUI.tabs[i].setCurrentTab();
                     return;
@@ -25,14 +25,16 @@ var webclientUI = {
         }
     },
 
-    setBattleSound : function(val) {
+    setBattleSound: function(val) {
         console.log("setting battle sounds " + val);
         webclientUI.battles.setSound(val);
         poStorage.set("battle.sound", val);
-        setTimeout(function(){$("#checkbox-simplesound-dd").prop("checked", webclientUI.battles.sound);});
+        setTimeout(function() {
+            $("#checkbox-simplesound-dd").prop("checked", webclientUI.battles.sound);
+        });
     },
 
-    updateBadgeCount : function() {
+    updateBadgeCount: function() {
         var total = -1; // NOTHING DISPLAYED
 
         if (webclientUI.channels.countActive() > 0) {
@@ -46,28 +48,28 @@ var webclientUI = {
         }
 
         /* -1 : no badge, 0+ : badge with 0+ displayed */
-       	notif.count = total
-		notif.titleUpdate();
-        //Todo: remove the log and actually add the badge.
+        notif.count = total;
+        notif.titleUpdate();
+        // Todo: remove the log and actually add the badge.
     },
 
     updateSearchingBattleState: function() {
         $("#findbattle a").text(webclient.searchingForBattle ? "Searching..." : "Find battle");
     },
 
-    printHtml : function(html) {
+    printHtml: function(html) {
         for (var id in webclientUI.channels.channels()) {
             webclientUI.channels.channel(id).printHtml(html);
         }
     },
 
-    printMessage : function(msg, html) {
+    printMessage: function(msg, html) {
         for (var id in webclientUI.channels.channels()) {
             webclientUI.channels.channel(id).printMessage(msg, html);
         }
     },
 
-    switchToTab : function(wid) {
+    switchToTab: function(wid) {
         var id = wid.substr(wid.lastIndexOf("-") + 1);
         var obj;
         if (/^channel-/.test(wid)) {
@@ -81,25 +83,25 @@ var webclientUI = {
         obj.setCurrentTab();
     },
 
-    displayPlayerWindow : function(id, params) {
+    displayPlayerWindow: function(id, params) {
         params = params || {};
         var info = "Loading player info...";
         var pl = webclient.players.player(id) || webclient.ownPlayer();
-        var self = webclient.ownId === id;
+        var isSelf = webclient.ownId === id;
 
-        if (! ("clauses" in params) ) {
+        if (!("clauses" in params)) {
             params.clauses = poStorage.get("challenge.clauses", "array") || [];
         }
 
         if (pl.hasOwnProperty("info")) {
-            info = $('<iframe class="player-info" sandbox></iframe>').attr("src", "data:text/html;charset=utf-8,"+webclientUI.convertImages($("<div>").html(pl.info)).html());
+            info = $("<iframe class=\"player-info\" sandbox></iframe>").attr("src", "data:text/html;charset=utf-8," + webclientUI.convertImages($("<div>").html(pl.info)).html());
         } else {
-            info = $('<iframe class="player-info" sandbox></iframe>').attr("src", "data:text/html;charset=utf-8,"+info);
+            info = $("<iframe class=\"player-info\" sandbox></iframe>").attr("src", "data:text/html;charset=utf-8," + info);
         }
         info = $("<div class='well well-sm info-block'>").append(info);
 
         var firstRow = $("<div class='flex-row-no-shrink'>").append("<img src='" + PokeInfo.trainerSprite(pl.avatar) + "' alt='trainer sprite' class='player-avatar'>");
-        firstRow.append($("<div class='player-teams'>" + (!self ? "<div class='form-group'><label for='opp-team'>Opponent's team:</label><select class='form-control' id='opp-team'></select></div>" : "") + "<div class='form-group'><label for='your-team'>Your team:</label><select class='form-control' id='your-team'></select></div></div>"));
+        firstRow.append($("<div class='player-teams'>" + (!isSelf ? "<div class='form-group'><label for='opp-team'>Opponent's team:</label><select class='form-control' id='opp-team'></select></div>" : "") + "<div class='form-group'><label for='your-team'>Your team:</label><select class='form-control' id='your-team'></select></div></div>"));
         info = $("<div class='flex-column'>").append(firstRow).append(info);
 
         var tier, i;
@@ -114,7 +116,7 @@ var webclientUI = {
         } else {
             for (i in webclient.ownTiers) {
                 if (!params.desc || webclient.ownTiers[i].toLowerCase() == params.tier.toLowerCase()) {
-                    ownTeams.append($("<option>").text("Team " + ((+i)+1) + ": " + webclient.ownTiers[i]).attr("value", i));
+                    ownTeams.append($("<option>").text("Team " + ((+i) + 1) + ": " + webclient.ownTiers[i]).attr("value", i));
                 }
             }
         }
@@ -124,7 +126,7 @@ var webclientUI = {
         if (params.hasOwnProperty("opptier")) {
             oppTeams = info.find("#opp-team");
             oppTeams.append($("<option>").text(params.opptier));
-            oppTeams.prop('disabled', 'disabled');
+            oppTeams.prop("disabled", "disabled");
         }
 
         if (!params.desc && params.ratings) {
@@ -145,7 +147,7 @@ var webclientUI = {
         info.updateRatings = true;
         webclientUI.waitingInfos[id] = info;
         webclient.requestInfo(id);
-        if (!self) {
+        if (!isSelf) {
             webclientUI.waitingInfos[webclient.ownId] = info;
             webclient.requestInfo(webclient.ownId);
         }
@@ -158,7 +160,7 @@ var webclientUI = {
         fullInfo.append(clauses);
 
         if (params.clauses) {
-            for (i = 0; i < params.clauses.length; i = i+1) {
+            for (i = 0; i < params.clauses.length; i = i + 1) {
                 if (params.clauses[i]) {
                     clauses.find("input:eq(" + i + ")").prop("checked", true);
                 }
@@ -189,10 +191,10 @@ var webclientUI = {
 
         if (!params.desc) {
             var isIgnored = webclient.players.isIgnored(id);
-            if (!self) {
+            if (!isSelf) {
                 buttons = [{
-                    label: (isIgnored ? 'Unignore' : 'Ignore'),
-                    action: function(dialogItself){
+                    label: (isIgnored ? "Unignore" : "Ignore"),
+                    action: function(dialogItself) {
                         if (!isNaN(id)) {
                             if (!isIgnored) {
                                 webclient.players.addIgnore(id);
@@ -204,15 +206,18 @@ var webclientUI = {
                         dialogItself.close();
                     }
                 }, {
-                    label: 'Private Message',
-                    action: function(dialogItself){
+                    label: "Private Message",
+                    action: function(dialogItself) {
                         webclient.pms.pm(id, true);
                         dialogItself.close();
                     }
                 }, {
-                    label: 'Challenge',
-                    action: function(dialogItself){
-                        var params = {"team": 0, "mode": 0};
+                    label: "Challenge",
+                    action: function(dialogItself) {
+                        var params = {
+                            "team": 0,
+                            "mode": 0
+                        };
                         params.clauses = [];
 
                         for (var i in BattleTab.clauses) {
@@ -232,8 +237,8 @@ var webclientUI = {
             }
         } else {
             buttons = [{
-                label: 'Decline',
-                action: function(dialogItself){
+                label: "Decline",
+                action: function(dialogItself) {
                     webclient.declineChallenge(params);
                     dialogItself.setData("declined", true);
                     dialogItself.close();
@@ -241,8 +246,8 @@ var webclientUI = {
                     webclientUI.printHtml("<span class='challenge-refused'>You refused " + pl.name + "'s challenge.</span>");
                 }
             }, {
-                label: 'Accept',
-                action: function(dialogItself){
+                label: "Accept",
+                action: function(dialogItself) {
                     params.team = info.find("#your-team").val();
                     webclient.acceptChallenge(params);
                     dialogItself.setData("accepted", true);
@@ -252,9 +257,9 @@ var webclientUI = {
         }
 
         var dialogInstance = new BootstrapDialog({
-            title: utils.escapeHtml(pl.name) + (params.desc? " challenged you in " + params.tier + "!" : ""),
+            title: utils.escapeHtml(pl.name) + (params.desc ? " challenged you in " + params.tier + "!" : ""),
             message: fullInfo,
-            "buttons": buttons ,
+            "buttons": buttons,
             onhidden: function(dialogItself) {
                 if (params.desc && !dialogItself.getData("cancelled")) {
                     if (!dialogItself.getData("accepted") && !dialogItself.getData("declined")) {
@@ -262,7 +267,7 @@ var webclientUI = {
                     }
                 }
             },
-            closeByBackdrop: params.desc ? false : true
+            closeByBackdrop: !params.desc
         });
         dialogInstance.open();
         dialogInstance.setData("params", params);
@@ -270,7 +275,7 @@ var webclientUI = {
         return dialogInstance;
     },
 
-    showChallenge : function(params) {
+    showChallenge: function(params) {
         webclientUI.challenges.push(webclientUI.displayPlayerWindow(params.id, params));
     },
 
@@ -296,8 +301,8 @@ var webclientUI = {
             var plInfo = webclientUI.waitingInfos[id];
             var oppPl = webclient.players.player(id);
             if (id !== webclient.ownId) {
-                plInfo.find(".player-avatar").attr("src", PokeInfo.trainerSprite(oppPl.avatar  || 167 ));
-                plInfo.find(".player-info").attr("src", "data:text/html;charset=utf-8,"+webclientUI.convertImages($("<div>").html(info)).html());
+                plInfo.find(".player-avatar").attr("src", PokeInfo.trainerSprite(oppPl.avatar || 167));
+                plInfo.find(".player-info").attr("src", "data:text/html;charset=utf-8," + webclientUI.convertImages($("<div>").html(info)).html());
             }
 
             if (plInfo.updateRatings) {
@@ -310,7 +315,7 @@ var webclientUI = {
                 oppTeams.html("");
                 var selected = false, c = 1;
                 for (var tier in oppPl.ratings) {
-                    prefix = id == webclient.ownId ? "Team " + c +": " : "";
+                    prefix = id == webclient.ownId ? "Team " + c + ": " : "";
                     /* If the opponent shares a tier with us, challenge them in that tier */
                     if (!selected && webclient.ownTiers.indexOf(tier) != -1) {
                         selected = true;
@@ -327,7 +332,7 @@ var webclientUI = {
 
     convertImages: function(element) {
         element = $(element);
-        element.find("img").each(function (index, img) {
+        element.find("img").each(function(index, img) {
             img = $(img);
             var src = img.attr("src").split(":"),
                 proto = src[0],
@@ -343,7 +348,7 @@ var webclientUI = {
                         back = utils.queryField("back", "false", query) === "true",
                         cropped = utils.queryField("cropped", "false", query) === "true";
 
-                    img.error(function () {
+                    img.error(function() {
                         if (gender == "female") {
                             gender = "male";
                         } else if (gen < 6) {
@@ -358,8 +363,30 @@ var webclientUI = {
                             return;
                         }
 
-                        img.attr("src", PokeInfo.sprite({num: poke[0], forme: poke[1], female: gender === "female", shiny: shiny}, {gen: gen, back: back}));
-                    }).attr("src", PokeInfo.sprite({num: poke[0], forme: poke[1], female: gender === "female", shiny: shiny}, {gen: gen, back: back}));
+                        img.attr("src", PokeInfo.sprite(
+                            {
+                                num: poke[0],
+                                forme: poke[1],
+                                female: gender === "female",
+                                shiny: shiny
+                            },
+                            {
+                                gen: gen,
+                                back: back
+                            }
+                        ));
+                    }).attr("src", PokeInfo.sprite(
+                        {
+                            num: poke[0],
+                            forme: poke[1],
+                            female: gender === "female",
+                            shiny: shiny
+                        },
+                        {
+                            gen: gen,
+                            back: back
+                        }
+                    ));
                     break;
                 case "item":
                     img.attr("src", ItemInfo.itemSprite(query));
@@ -382,7 +409,7 @@ var webclientUI = {
         return element;
     },
 
-    showSettings : function() {
+    showSettings: function() {
         var content = $("<div>");
         BootstrapDialog.show({
             "title": "Settings for " + webclient.ownName(),
@@ -390,22 +417,22 @@ var webclientUI = {
                 content.load("settings.html", function(response, status) {
                     if (status == "error") {
                         dialogItself.setData("error", true);
-                        //todo, error details can be gotten from arguments[2]
+                        // todo, error details can be gotten from arguments[2]
                         return;
                     }
                     content.find("#username").val(poStorage.get("user") || "");
-                    content.find("#usercolor").val(poStorage.get("player.color") || "").colorpicker({"format":"hex"});
+                    content.find("#usercolor").val(poStorage.get("player.color") || "").colorpicker({ "format": "hex" });
                     content.find("#userinfo").val(poStorage.get("player.info") || "");
                     content.find("#useravatar").val(poStorage.get("player.avatar") || 0);
-                    var setAvatar = function () {
-                        var num = parseInt(content.find("#useravatar").val());
+                    var setAvatar = function() {
+                        var num = parseInt(content.find("#useravatar").val(), 10);
                         if (isNaN(num) || num < 0 || num > 729) {
                             // nothing or invalid avatar given, do not change
                             return;
                         }
                         content.find("#settings-avatar-image").attr("src", PokeInfo.trainerSprite(num));
                     };
-                    var updateLimitCounter = function () {
+                    var updateLimitCounter = function() {
                         content.find(".userinfo-limit-counter").text(content.find("#userinfo").val().length + "/" + content.find("#userinfo").attr("maxlength"));
                     };
                     setAvatar();
@@ -415,41 +442,43 @@ var webclientUI = {
                 });
                 return content;
             },
-            "buttons": [ {
-                    label: "Update",
-                    action: function(dialogItself) {
-                        if (dialogItself.getData("error")) {
-                            dialogItself.close();
-                            return;
-                        }
-                        var userName = content.find("#username").val();
-                        var userColor = content.find("#usercolor").val();
-                        var userInfo = content.find("#userinfo").val();
-                        var userAvatar = content.find("#useravatar").val();
-                        poStorage.set("user", userName);
-                        poStorage.set("player.color", userColor);
-                        poStorage.set("player.info", userInfo);
-                        poStorage.set("player.avatar", Math.floor(Math.min(729, Math.max(userAvatar, 0))));
-
-                        var update = {};
-
-                        if (userName != webclient.ownName()) {
-                            update.name = userName;
-                        }
-                        if (userColor != webclient.players.color(webclient.ownId) && userColor) {
-                            update.color = userColor;
-                        }
-                        if (userInfo != webclient.ownPlayer().info && userInfo || userAvatar != webclient.ownPlayer().avatar) {
-                            update.info = {"avatar": poStorage.get("player.avatar") || 167, "info": userInfo};
-                        }
-                        network.command("teamchange", update);
-                        webclient.searchingForBattle = false;
-                        webclientUI.updateSearchingBattleState();
-
+            "buttons": [{
+                label: "Update",
+                action: function(dialogItself) {
+                    if (dialogItself.getData("error")) {
                         dialogItself.close();
+                        return;
                     }
+                    var userName = content.find("#username").val();
+                    var userColor = content.find("#usercolor").val();
+                    var userInfo = content.find("#userinfo").val();
+                    var userAvatar = content.find("#useravatar").val();
+                    poStorage.set("user", userName);
+                    poStorage.set("player.color", userColor);
+                    poStorage.set("player.info", userInfo);
+                    poStorage.set("player.avatar", Math.floor(Math.min(729, Math.max(userAvatar, 0))));
+
+                    var update = {};
+
+                    if (userName != webclient.ownName()) {
+                        update.name = userName;
+                    }
+                    if (userColor != webclient.players.color(webclient.ownId) && userColor) {
+                        update.color = userColor;
+                    }
+                    if (userInfo != webclient.ownPlayer().info && userInfo || userAvatar != webclient.ownPlayer().avatar) {
+                        update.info = {
+                            "avatar": poStorage.get("player.avatar") || 167,
+                            "info": userInfo
+                        };
+                    }
+                    network.command("teamchange", update);
+                    webclient.searchingForBattle = false;
+                    webclientUI.updateSearchingBattleState();
+
+                    dialogItself.close();
                 }
-            ]
+            }]
         });
     },
 
@@ -466,10 +495,10 @@ var webclientUI = {
     }
 };
 
-vex.defaultOptions.className = 'vex-theme-os';
+vex.defaultOptions.className = "vex-theme-os";
 
 $(function() {
-    webclientUI.linkClickHandler = function (event) {
+    webclientUI.linkClickHandler = function(event) {
         var href = this.href,
             sep, cmd, payload, pid;
 
@@ -504,7 +533,7 @@ $(function() {
                     webclientUI.players.updatePlayer(+pid);
                 }
             } else if (cmd === "watch") {
-                network.command('watch', {battle: +payload});
+                network.command("watch", { battle: +payload });
             } else if (cmd === "send") {
                 webclient.currentTab.sendMessage(payload);
             } else if (cmd === "setmsg") {
@@ -512,40 +541,50 @@ $(function() {
             } else if (cmd === "appendmsg") {
                 webclient.currentTab.chat.chatSend.val(webclient.currentTab.chat.chatSend.val() + payload);
             } else if (cmd === "reconnect") {
-                //window.location.href= window.location.pathname;
+                // window.location.href= window.location.pathname;
                 window.location.reload();
             } else if (cmd === "watch-player") {
                 if (webclient.battles.isBattling(+payload)) {
-                    network.command('watch', {battle: webclient.battles.battleOfPlayer(+payload)});
+                    network.command("watch", { battle: webclient.battles.battleOfPlayer(+payload) });
                 }
             } else if (cmd === "kick") {
-                network.command('kick', {id: +payload});
+                network.command("kick", { id: +payload });
             } else if (cmd === "ban") {
-                network.command('ban', {id: +payload});
+                network.command("ban", { id: +payload });
             } else if (cmd === "idle") {
                 webclientUI.toggleIdle();
             } else if (cmd === "timestamps") {
                 webclientUI.timestamps = !webclientUI.timestamps;
-                setTimeout(function(){$("#checkbox-timestamps-dd").prop("checked", webclientUI.timestamps);});
+                setTimeout(function() {
+                    $("#checkbox-timestamps-dd").prop("checked", webclientUI.timestamps);
+                });
                 poStorage.set("chat.timestamps", webclientUI.timestamps);
             } else if (cmd === "rainbow") {
                 webclientUI.players.showColors = !webclientUI.players.showColors;
-                setTimeout(function(){$("#checkbox-rainbow-dd").prop("checked", webclientUI.players.showColors);});
+                setTimeout(function() {
+                    $("#checkbox-rainbow-dd").prop("checked", webclientUI.players.showColors);
+                });
                 poStorage.set("players.rainbow", webclientUI.players.showColors);
                 $(".chat-column").toggleClass("rainbow");
                 webclientUI.players.updatePlayers();
             } else if (cmd === "sortauth") {
                 webclientUI.players.authFilter = !webclientUI.players.authFilter;
-                setTimeout(function(){$("#checkbox-sortauth-dd").prop("checked", webclientUI.players.authFilter);});
+                setTimeout(function() {
+                    $("#checkbox-sortauth-dd").prop("checked", webclientUI.players.authFilter);
+                });
                 webclientUI.players.updatePlayers();
                 poStorage.set("sort-by-auth", webclientUI.players.authFilter);
             } else if (cmd === "exitwarning") {
                 webclientUI.exitWarning = !webclientUI.exitWarning;
-                setTimeout(function(){$("#checkbox-exitwarning-dd").prop("checked", webclientUI.exitWarning);});
+                setTimeout(function() {
+                    $("#checkbox-exitwarning-dd").prop("checked", webclientUI.exitWarning);
+                });
                 poStorage.set("exitwarning", webclientUI.exitWarning);
             } else if (cmd === "simplebattle") {
                 webclientUI.battles.simpleWindow = !webclientUI.battles.simpleWindow;
-                setTimeout(function(){$("#checkbox-simplebattle-dd").prop("checked", webclientUI.battles.simpleWindow);});
+                setTimeout(function() {
+                    $("#checkbox-simplebattle-dd").prop("checked", webclientUI.battles.simpleWindow);
+                });
                 poStorage.set("battle.simple-window", webclientUI.battles.simpleWindow);
             } else if (cmd === "battlesound") {
                 var currentSound = webclientUI.battles.sound == "unset" ? false : webclientUI.battles.sound;
@@ -562,9 +601,12 @@ $(function() {
             } else if (cmd == "settings") {
                 webclientUI.showSettings();
             } else if (cmd == "findbattle") {
-                //rated: bool, sameTier: bool, range: int
+                // rated: bool, sameTier: bool, range: int
                 if (!webclient.searchingForBattle) {
-                    network.command("findbattle", {rated: false, sameTier: true});
+                    network.command("findbattle", {
+                        rated: false,
+                        sameTier: true
+                    });
                     webclient.searchingForBattle = true;
                     webclientUI.updateSearchingBattleState();
                 } else {
@@ -577,8 +619,8 @@ $(function() {
                 webclientUI.teambuilderOpen = true;
                 BootstrapDialog.show({
                     title: "Teambuilder",
-                    message : function() {
-                        var content = $("<div>").load("teambuilder.html?load=" + (webclient.teambuilderLoaded ? false : true), function(response, status) {
+                    message: function() {
+                        var content = $("<div>").load("teambuilder.html?load=" + !webclient.teambuilderLoaded, function(response, status) {
                             if (status == "error") {
                                 return;
                             }
@@ -615,7 +657,7 @@ $(function() {
                 });
             } else if (cmd == "tb-setgen") {
                 webclientUI.teambuilder.setGen(+payload);
-            }else if (cmd == "download") {
+            } else if (cmd == "download") {
                 $("#download-hidden").val(JSON.stringify(localStorage));
                 $("#download-form").submit();
             } else if (cmd == "upload") {
@@ -635,11 +677,9 @@ $(function() {
                     fileReader.readAsText(file, "utf-8");
                 });
             }
-        } else {
-            if (webclient.connectedToServer && !$(this).attr("target")) {
-                /* Make sure link opens in a new window */
-                this.target = "_blank";
-            }
+        } else if (webclient.connectedToServer && !$(this).attr("target")) {
+            /* Make sure link opens in a new window */
+            this.target = "_blank";
         }
     };
     /* handle clicks on links, especially with po: urls */
@@ -689,16 +729,17 @@ $(function() {
     webclientUI.channels.chanevents = poStorage.get("chanevents-" + (poStorage.get("relay") || config.relayIP), "object") || {};
     webclientUI.channels.channotifs = poStorage.get("channotifs-" + (poStorage.get("relay") || config.relayIP), "object") || {};
 
-    $('[data-toggle="tooltip"]').attr("data-placement", "bottom").tooltip();
+    $("[data-toggle=\"tooltip\"]").attr("data-placement", "bottom").tooltip();
 });
 
 window.onbeforeunload = function(e) {
-    if (webclientUI.exitWarning) {
+    if (webclientUI.exitWarning &&
+        webclient.connectedToServer &&
+        window.location.href != e.target.baseURI) {
         // don't show message when staying on the site
-        if (webclient.connectedToServer && window.location.href != e.target.baseURI) {
-            return 'Are you sure you want to disconnect from the server?';
-        }
+        return "Are you sure you want to disconnect from the server?";
     }
+    return undefined;
 };
 
 window.webclientUI = webclientUI;
@@ -706,20 +747,20 @@ window.webclientUI = webclientUI;
 $(function() {
     /* Load heavy libraries after */
     $("body").append([
-        '<link rel="stylesheet" href="public/assets/stylesheets/teambuilder.css">',
-        '<script src="public/assets/javascript/teambuilder.js"></script>'
-        ].join("\n")
-    );
-    $("#toggleSidebar").click(function(evt){
+        "<link rel=\"stylesheet\" href=\"public/assets/stylesheets/teambuilder.css\">",
+        "<script src=\"public/assets/javascript/teambuilder.js\"></script>"
+    ].join("\n"));
+
+    $("#toggleSidebar").click(function(evt) {
         evt.preventDefault();
         $("#leftmenu").toggleClass("hide");
     });
 
     var checkCompact = function() {
         if ($(window).width() < 768) {
-           $("#leftmenu").addClass("hide");
+            $("#leftmenu").addClass("hide");
         } else {
-           $("#leftmenu").removeClass("hide");
+            $("#leftmenu").removeClass("hide");
         }
     };
     checkCompact();

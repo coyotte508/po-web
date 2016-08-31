@@ -9,7 +9,7 @@ function serverConnect(params) {
     var port = params.port || config.hostPort;
 
     params.onconnect = params.onconnect || function() {
-        network.command("connect", {ip: "localhost:" + port});
+        network.command("connect", { ip: "localhost:" + port });
     };
 
     webclient.serverIP = relayIP;
