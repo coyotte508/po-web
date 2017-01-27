@@ -205,7 +205,8 @@ PokeInfo.genderSprite = function(num) {
 };
 
 PokeInfo.substituteSprite = function(back) {
-    return "http://pokemon-online.eu/images/poke_img/sub" + (back ? "b":"") + ".png";
+    return "/images/s-m/" + (back ? "back/" : "") + "substitute.png";
+    //return "http://pokemon-online.eu/images/poke_img/sub" + (back ? "b":"") + ".png";
 }
 
 PokeInfo.sprite = function(poke, params) {
