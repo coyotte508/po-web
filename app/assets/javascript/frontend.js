@@ -448,7 +448,7 @@ function WebclientUI() {
           content.find("#useravatar").val(poStorage.get("player.avatar") || 0);
           var setAvatar = function() {
             var num = parseInt(content.find("#useravatar").val());
-            if (isNaN(num) || num < 0 || num > 844) {
+            if (isNaN(num) || num < 0 || num > 852) {
               // nothing or invalid avatar given, do not change
               return;
             }
@@ -478,7 +478,7 @@ function WebclientUI() {
           poStorage.set("user", userName);
           poStorage.set("player.color", userColor);
           poStorage.set("player.info", userInfo);
-          poStorage.set("player.avatar", Math.floor(Math.min(844, Math.max(userAvatar, 0))));
+          poStorage.set("player.avatar", Math.floor(Math.min(852, Math.max(userAvatar, 0))));
 
           var update = {};
 
